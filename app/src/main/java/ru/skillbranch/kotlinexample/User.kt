@@ -44,10 +44,8 @@ class User private constructor(
         lastName: String?,
         rawPhone: String
     ) : this(firstName, lastName, rawPhone = rawPhone, meta = mapOf("auth" to "sms")) {
-        val code = generateAccessCode()
-        passwordHash = encrypt(code)
-        accessCode = code
-        sendAccessCodeToUser(rawPhone, code)
+        generateAccessCode()
+        if(accessCode != null) sendAccessCodeToUser(rawPhone, accessCode!!)
 
     }
 
@@ -65,8 +63,8 @@ class User private constructor(
         check(!firstName.isBlank()) { "FirstName must be not blank" }
         check(email.isNullOrBlank() || rawPhone.isNullOrBlank()) { "Email or phone must be not blank" }
         phone = rawPhone
-        login = email ?: phone!!
-        userInfo = """
+        login = email?.trim()?.toLowerCase() ?: phone!!
+        userInfo = if(meta?.get("auth") == "password") """
             firstName: $firstName
             lastName: $lastName
             login: $login
@@ -76,6 +74,18 @@ class User private constructor(
             phone: $phone
             meta: $meta
         """.trimIndent()
+         else
+            """
+            firstName: $firstName
+            lastName: $lastName
+            login: $phone
+            fullName: $fullName
+            initials: $initials
+            email: $email
+            phone: $phone
+            meta: $meta
+        """.trimIndent()
+
     }
 
     fun checkPassword(pass: String) = encrypt(pass) == passwordHash
@@ -95,15 +105,16 @@ class User private constructor(
 
     private fun sendAccessCodeToUser(phone: String, code: String) {}
 
-    private fun generateAccessCode(): String {
+    fun generateAccessCode() {
         val possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-        return StringBuilder().apply {
+        accessCode = StringBuilder().apply {
             repeat(6) {
                 (possible.indices).random().also {
                     append(possible[it])
                 }
             }
         }.toString()
+        if(accessCode != null) passwordHash = encrypt(accessCode!!)
 
     }
 

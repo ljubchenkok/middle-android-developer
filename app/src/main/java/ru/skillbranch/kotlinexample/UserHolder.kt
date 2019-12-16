@@ -23,8 +23,8 @@ object UserHolder {
             val phone = login.trim().replace("[^+\\d]".toRegex(), "")
             user = map[phone]
         }
-        return if(user!=null && user.checkPassword(password)) user.userInfo
-            else null
+        return if (user != null && user.checkPassword(password)) user.userInfo
+        else null
     }
 
     fun registerUserByPhone(fullName: String, rawPhone: String): User {
@@ -41,11 +41,33 @@ object UserHolder {
     }
 
     fun requestAccessCode(login: String) {
-        val user = map[login.trim().toLowerCase()] ?: map[login.trim().replace("[^+\\d]".toRegex(), "")] ?: return
+        val user =
+            map[login.trim().toLowerCase()] ?: map[login.trim().replace("[^+\\d]".toRegex(), "")]
+            ?: return
         user.generateAccessCode()
     }
 
     fun clearHolder() {
         map.clear()
+    }
+
+    fun importUsers(list: List<String>): List<User> {
+        val users = mutableListOf<User>()
+        for (string in list) {
+            val info = string.split(";")
+            val (firstName, lastName) = User.fullNameToPair(info[0])
+            if (info.size > 3) {
+                val user = User(
+                    firstName = firstName,
+                    lastName = lastName,
+                    email = info[1],
+                    authData = info[2],
+                    phone = info[3]
+                )
+                users+=user
+                map[user.login] = user
+            }
+        }
+        return users
     }
 }

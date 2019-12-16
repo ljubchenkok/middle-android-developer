@@ -68,12 +68,12 @@ class User private constructor(
         lastName: String?,
         email: String?,
         authData: String,
-        phone: String?
-    ) : this(
-        firstName, lastName, email = email, meta = mapOf("src" to "csv")) {
+        rawPhone: String?,
+        meta: Map<String, String>
+    ) : this(firstName, lastName, email, rawPhone, meta ) {
         passwordHash = authData.split(":")[1]
         _salt = authData.split(":")[0]
-        this.phone = if(phone.isNullOrBlank()) null else phone
+        this.phone = rawPhone
 
 
     }

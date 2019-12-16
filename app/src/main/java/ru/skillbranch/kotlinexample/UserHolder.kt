@@ -57,12 +57,16 @@ object UserHolder {
             val info = string.split(";")
             val (firstName, lastName) = User.fullNameToPair(info[0])
             if (info.size > 3) {
+                val email = info[1]
+                val authData = info[2]
+                val phone = info [3]
                 val user = User(
                     firstName = firstName,
                     lastName = lastName,
-                    email = info[1],
-                    authData = info[2],
-                    phone = info[3]
+                    email = if(email.isNullOrBlank()) null else email,
+                    authData = authData,
+                    rawPhone = if(phone.isNullOrBlank()) null else phone,
+                    meta = mapOf("src" to "csv")
                 )
                 users+=user
                 map[user.login] = user

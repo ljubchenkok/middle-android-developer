@@ -70,7 +70,7 @@ class User private constructor(
         authData: String,
         phone: String?
     ) : this(
-        firstName, lastName, email = email, meta = mapOf("auth" to "svc")) {
+        firstName, lastName, email = email, meta = mapOf("src" to "csv")) {
         passwordHash = authData.split(":")[1]
         _salt = authData.split(":")[0]
         this.phone = if(phone.isNullOrBlank()) null else phone

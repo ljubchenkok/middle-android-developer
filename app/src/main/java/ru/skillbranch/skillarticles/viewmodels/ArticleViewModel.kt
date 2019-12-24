@@ -30,14 +30,15 @@ class ArticleViewModel(private val articleId: String) :
                 title = article.title,
                 category = article.category,
                 categoryIcon = article.categoryIcon,
-                date = article.date.format()
+                date = article.date.format(),
+                author = article.author
             )
 
         }
         subscribeOnDataSource(getArticleContent()) { content, state ->
             content ?: return@subscribeOnDataSource null
             state.copy(
-//                isLoadingContent = false,
+                isLoadingContent = false,
                 content = content
 
             )
@@ -103,11 +104,11 @@ class ArticleViewModel(private val articleId: String) :
             repository.updateArticlePersonalInfo(info.copy(isBookmark = !info.isBookmark))
         }
         toggleBookmark()
-        val message = if(currentState.isBookmark) Notify.TextMessage("Added to bookmarks")
+        val message = if(currentState.isBookmark) Notify.TextMessage("Add to bookmarks")
         else {
             Notify.ActionMessage(
-                msg = "Add to bookmarks",
-                actionLabel = "Yes",
+                msg = "Remove from bookmarks",
+                actionLabel = "No",
                 actionHandler = toggleBookmark
             )
         }
@@ -120,10 +121,10 @@ class ArticleViewModel(private val articleId: String) :
            repository.updateArticlePersonalInfo(info.copy(isLike = !info.isLike))
        }
         toggleLike()
-        val message = if(currentState.isLike) Notify.TextMessage("Mark is like")
+        val message = if(currentState.isLike) Notify.TextMessage("Mark is liked")
         else {
             Notify.ActionMessage(
-                msg = "Don't like it anymore",
+                msg = "Don`t like it anymore",
                 actionLabel = "No, still like it",
                 actionHandler = toggleLike
             )

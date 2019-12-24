@@ -13,11 +13,11 @@ class ArticleViewModel(private val articleId: String) :
 
 
     override fun handleSearchMode(isSearch: Boolean) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
     override fun handleSearch(query: String?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
     private val repository = ArticleRepository
@@ -37,7 +37,7 @@ class ArticleViewModel(private val articleId: String) :
         subscribeOnDataSource(getArticleContent()) { content, state ->
             content ?: return@subscribeOnDataSource null
             state.copy(
-                isLoadingContent = false,
+//                isLoadingContent = false,
                 content = content
 
             )
@@ -103,11 +103,11 @@ class ArticleViewModel(private val articleId: String) :
             repository.updateArticlePersonalInfo(info.copy(isBookmark = !info.isBookmark))
         }
         toggleBookmark()
-        val message = if(currentState.isLike) Notify.TextMessage("Mark is Bookmark")
+        val message = if(currentState.isBookmark) Notify.TextMessage("Added to bookmarks")
         else {
             Notify.ActionMessage(
-                msg = "Deleted from Bookmark",
-                actionLabel = "Let it beBookmarked",
+                msg = "Add to bookmarks",
+                actionLabel = "Yes",
                 actionHandler = toggleBookmark
             )
         }
@@ -131,9 +131,8 @@ class ArticleViewModel(private val articleId: String) :
         notify(message)
     }
 
-
-
-
+    fun handleSearchQuery(text: String?) {
+    }
 
 
 }

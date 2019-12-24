@@ -1,9 +1,11 @@
 package ru.skillbranch.skillarticles.ui
 
 import android.os.Bundle
+import android.view.Menu
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.snackbar.Snackbar
@@ -16,6 +18,7 @@ import ru.skillbranch.skillarticles.viewmodels.ArticleState
 import ru.skillbranch.skillarticles.viewmodels.ArticleViewModel
 import ru.skillbranch.skillarticles.viewmodels.Notify
 import ru.skillbranch.skillarticles.viewmodels.ViewModelFactory
+
 
 class RootActivity : AppCompatActivity() {
 
@@ -62,6 +65,26 @@ class RootActivity : AppCompatActivity() {
         }
         snackbar.show()
 
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(ru.skillbranch.skillarticles.R.menu.menu_search, menu)
+        val searchView = (menu?.findItem(R.id.action_search))?.actionView as SearchView
+        searchView.queryHint = "Поиск"
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return true
+            }
+
+            override fun onQueryTextChange(text: String?): Boolean {
+                viewModel.handleSearchQuery(text)
+                return true
+
+
+            }
+
+        })
+        return super.onCreateOptionsMenu(menu)
     }
 
 

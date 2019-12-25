@@ -59,6 +59,7 @@
         android:layout_gravity="bottom"
         android:theme="@style/ArticleBarsTheme"
         android:elevation="4dp"
+        app:layout_behavior="ru.skillbranch.skillarticles.ui.custom.behaviors.BottombarBehavior"
         android:background="@drawable/ripple"
         app:layout_insetEdge="bottom"/>
 

@@ -65,7 +65,7 @@ object NetworkDataHolder {
 
     fun loadArticleContent(articleId: String): LiveData<List<Any>?> {
         GlobalScope.launch {
-            if (isDelay) delay(2000)
+            if (isDelay) delay(5000)
             content.postValue(listOf(longText))
         }
         return content

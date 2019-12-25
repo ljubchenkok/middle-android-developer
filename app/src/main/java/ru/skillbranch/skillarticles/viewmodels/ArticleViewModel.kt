@@ -12,9 +12,7 @@ class ArticleViewModel(private val articleId: String) :
     BaseViewModel<ArticleState>(ArticleState()), IArticleViewModel {
 
 
-    override fun handleSearch(query: String?) {
-      updateState { it.copy(searchQuery = query) }
-    }
+
 
     private val repository = ArticleRepository
 
@@ -96,6 +94,10 @@ class ArticleViewModel(private val articleId: String) :
 
     override fun handleSearchMode(isSearch: Boolean) {
         updateState { it.copy(isSearch = isSearch) }
+    }
+
+    override fun handleSearch(query: String?) {
+        updateState { it.copy(searchQuery = query) }
     }
 
     override fun handleBookmark() {

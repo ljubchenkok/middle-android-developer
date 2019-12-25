@@ -24,7 +24,7 @@ import ru.skillbranch.skillarticles.viewmodels.ViewModelFactory
 
 class RootActivity : AppCompatActivity() {
 
-    private var searchQuery: String = ""
+    private var searchQuery: String? = null
     private var searchItem: MenuItem? = null
     private lateinit var viewModel: ArticleViewModel
 
@@ -85,11 +85,7 @@ class RootActivity : AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onBackPressed() {
-        val n = 0;
-        Log.d("aaa", "aaa")
 
-    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_search) {
@@ -115,7 +111,8 @@ class RootActivity : AppCompatActivity() {
     }
 
     private fun renderUi(data: ArticleState) {
-        searchQuery = data.searchQuery ?: ""
+        if (data.isSearch) searchQuery = data.searchQuery ?: ""
+        else searchQuery = null
         btn_settings.isChecked = data.isShowMenu
         if (data.isShowMenu) submenu.open() else submenu.close()
         btn_like.isChecked = data.isLike
@@ -176,7 +173,7 @@ class RootActivity : AppCompatActivity() {
 
         val textView = searchView.findViewById<SearchView.SearchAutoComplete>(R.id.search_src_text)
         textView.setTextColor(getColor(R.color.color_on_article_bar))
-        if (!searchQuery.isNullOrEmpty()) {
+        if (searchQuery!=null) {
             searchItem?.expandActionView()
             searchView.setQuery(searchQuery, false)
             searchView.clearFocus()
@@ -189,7 +186,7 @@ class RootActivity : AppCompatActivity() {
         val logo = if (toolbar.childCount > 2) toolbar.getChildAt(2) as ImageView else null
         logo?.scaleType = ImageView.ScaleType.CENTER_CROP
         val lp = logo?.layoutParams as Toolbar.LayoutParams
-        lp?.let {
+        lp.let {
             it.width = this.dpToIntPx(40)
             it.height = this.dpToIntPx(40)
             it.marginEnd = this.dpToIntPx(16)

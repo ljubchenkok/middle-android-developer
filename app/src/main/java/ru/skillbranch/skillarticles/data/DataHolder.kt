@@ -20,7 +20,7 @@ object LocalDataHolder {
 
     fun findArticle(articleId: String): LiveData<ArticleData?> {
         GlobalScope.launch {
-            if (isDalay) delay(20000)
+            if (isDalay) delay(2000)
             articleData.postValue(
                 ArticleData(
                     title = "CoordinatorLayout Basic",
@@ -37,7 +37,7 @@ object LocalDataHolder {
 
     fun findArticlePersonalInfo(articleId: String): LiveData<ArticlePersonalInfo?> {
         GlobalScope.launch {
-            if (isDalay) delay(10000)
+            if (isDalay) delay(1000)
             articleInfo.postValue(ArticlePersonalInfo(isBookmark = true))
         }
         return articleInfo
@@ -65,7 +65,7 @@ object NetworkDataHolder {
 
     fun loadArticleContent(articleId: String): LiveData<List<Any>?> {
         GlobalScope.launch {
-            if (isDelay) delay(50000)
+            if (isDelay) delay(2000)
             content.postValue(listOf(longText))
         }
         return content

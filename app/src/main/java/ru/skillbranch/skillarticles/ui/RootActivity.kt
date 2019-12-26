@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_root.*
@@ -23,8 +24,6 @@ import ru.skillbranch.skillarticles.viewmodels.ViewModelFactory
 
 class RootActivity : AppCompatActivity() {
 
-    private var searchQuery: String? = null
-    private var searchItem: MenuItem? = null
     private lateinit var viewModel: ArticleViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,18 +70,7 @@ class RootActivity : AppCompatActivity() {
 
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_search, menu)
-        searchItem = menu?.findItem(R.id.action_search)
-        if (searchItem != null) {
-            setupMenu(searchQuery)
-        }
 
-
-
-
-        return super.onCreateOptionsMenu(menu)
-    }
 
 
 
@@ -110,8 +98,6 @@ class RootActivity : AppCompatActivity() {
     }
 
     private fun renderUi(data: ArticleState) {
-        if (data.isSearch) searchQuery = data.searchQuery ?: ""
-        else searchQuery = null
         btn_settings.isChecked = data.isShowMenu
         if (data.isShowMenu) submenu.open() else submenu.close()
         btn_like.isChecked = data.isLike
@@ -135,15 +121,36 @@ class RootActivity : AppCompatActivity() {
         toolbar.title = data.title ?: "loading"
         toolbar.subtitle = data.category ?: "loading"
         if (data.category != null) toolbar.logo = getDrawable(data.categoryIcon as Int)
-
-
-
     }
 
-    private fun setupMenu(searchQuery: String?) {
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_search, menu)
+        val searchItem = menu?.findItem(R.id.action_search)
+        if (searchItem != null) {
+            setupMenu(searchItem)
+            viewModel.searchMode.observe(this, Observer {
+                it.getContentIfNotHandled()?.let { pair ->
+                    if(pair.first){
+                        val searchView = searchItem.actionView as SearchView
+                        searchItem.expandActionView()
+                        searchView.setQuery(pair.second, false)
+                        searchView.clearFocus()
 
-        val searchView = searchItem!!.actionView as SearchView
-        searchView.queryHint = "Поиск"
+                    }
+                }
+            })
+        }
+
+
+
+
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    private fun setupMenu(searchItem: MenuItem) {
+
+        val searchView = searchItem.actionView as SearchView
+        searchView.queryHint = "Search"
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return true
@@ -152,12 +159,10 @@ class RootActivity : AppCompatActivity() {
             override fun onQueryTextChange(text: String?): Boolean {
                 viewModel.handleSearch(text)
                 return true
-
-
             }
 
         })
-        searchItem?.setOnActionExpandListener(object :
+        searchItem.setOnActionExpandListener(object :
             MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
                 viewModel.handleSearchMode(true)
@@ -172,11 +177,12 @@ class RootActivity : AppCompatActivity() {
 
         val textView = searchView.findViewById<SearchView.SearchAutoComplete>(R.id.search_src_text)
         textView.setTextColor(getColor(R.color.color_on_article_bar))
-        if (searchQuery!=null) {
-            searchItem?.expandActionView()
-            searchView.setQuery(searchQuery, false)
-            searchView.clearFocus()
-        }
+        textView.setHintTextColor(getColor(R.color.color_on_article_bar))
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.setSearchMode()
     }
 
     private fun setupToolbar() {

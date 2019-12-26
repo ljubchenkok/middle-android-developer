@@ -1,6 +1,7 @@
 package ru.skillbranch.skillarticles.viewmodels
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import ru.skillbranch.skillarticles.data.ArticleData
 import ru.skillbranch.skillarticles.data.ArticlePersonalInfo
 import ru.skillbranch.skillarticles.data.repositories.ArticleRepository
@@ -15,6 +16,15 @@ class ArticleViewModel(private val articleId: String) :
 
 
     private val repository = ArticleRepository
+    private val _searchMode = MutableLiveData<Event<Pair<Boolean, String>>>()
+    val searchMode:LiveData<Event<Pair<Boolean, String>>>
+        get() = _searchMode
+
+    fun setSearchMode(){
+        _searchMode.value = Event(Pair(
+            currentState.isSearch, currentState.searchQuery ?: ""
+        ))
+    }
 
     init {
         subscribeOnDataSource(getArticleData()) { article, state ->

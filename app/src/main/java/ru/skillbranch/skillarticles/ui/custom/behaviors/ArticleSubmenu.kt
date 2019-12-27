@@ -25,7 +25,7 @@ class ArticleSubmenu<V : View>(context: Context, attrs: AttributeSet) :
     ) {
         super.onNestedPreScroll(coordinatorLayout, child, target, dx, dy, consumed, type)
         if( dependedViewTranslationY != 0f)
-        child.translationX = dependedViewTranslationY*child.width/dependedViewHeight+child.marginEnd
+            child.translationX = dependedViewTranslationY*child.width/dependedViewHeight+child.marginEnd
 
     }
 

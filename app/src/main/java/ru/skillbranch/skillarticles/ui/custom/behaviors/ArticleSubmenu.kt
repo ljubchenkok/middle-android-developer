@@ -7,6 +7,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.marginEnd
 import androidx.core.view.marginRight
+import ru.skillbranch.skillarticles.ui.custom.Bottombar
 
 class ArticleSubmenu<V : View>(context: Context, attrs: AttributeSet) :
     CoordinatorLayout.Behavior<V>(context, attrs) {
@@ -40,9 +41,12 @@ class ArticleSubmenu<V : View>(context: Context, attrs: AttributeSet) :
         if (dependedViewTranslationY != 0f)
             child.translationX =
                 dependedViewTranslationY * (child.width + child.marginEnd) / dependedViewHeight
-       else child.translationX = 0f
+        else child.translationX = 0f
     }
 
+    override fun layoutDependsOn(parent: CoordinatorLayout, child: V, dependency: View): Boolean {
+        return dependency is Bottombar
+    }
     override fun onDependentViewChanged(
         parent: CoordinatorLayout,
         child: V,

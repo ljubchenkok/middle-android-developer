@@ -1,5 +1,7 @@
 package ru.skillbranch.skillarticles.viewmodels
 
+
+import android.os.Bundle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import ru.skillbranch.skillarticles.data.ArticleData
@@ -8,22 +10,26 @@ import ru.skillbranch.skillarticles.data.repositories.ArticleRepository
 import ru.skillbranch.skillarticles.extensions.data.toAppSettings
 import ru.skillbranch.skillarticles.extensions.data.toArticlePersonalInfo
 import ru.skillbranch.skillarticles.extensions.format
+import ru.skillbranch.skillarticles.viewmodels.base.BaseViewModel
+import ru.skillbranch.skillarticles.viewmodels.base.Event
+import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
+import ru.skillbranch.skillarticles.viewmodels.base.Notify
 
 class ArticleViewModel(private val articleId: String) :
     BaseViewModel<ArticleState>(ArticleState()), IArticleViewModel {
 
 
-
-
     private val repository = ArticleRepository
     private val _searchMode = MutableLiveData<Event<Pair<Boolean, String>>>()
-    val searchMode:LiveData<Event<Pair<Boolean, String>>>
+    val searchMode: LiveData<Event<Pair<Boolean, String>>>
         get() = _searchMode
 
-    fun setSearchMode(){
-        _searchMode.value = Event(Pair(
-            currentState.isSearch, currentState.searchQuery ?: ""
-        ))
+    fun setSearchMode() {
+        _searchMode.value = Event(
+            Pair(
+                currentState.isSearch, currentState.searchQuery ?: ""
+            )
+        )
     }
 
     init {
@@ -48,17 +54,17 @@ class ArticleViewModel(private val articleId: String) :
             )
         }
 
-        subscribeOnDataSource(getArticlePersonalInfo()){ info, state ->
+        subscribeOnDataSource(getArticlePersonalInfo()) { info, state ->
             info ?: return@subscribeOnDataSource null
             state.copy(
                 isBookmark = info.isBookmark,
-                isLike =  info.isLike
+                isLike = info.isLike
 
             )
 
         }
 
-        subscribeOnDataSource(repository.getAppSettings()){settings, state ->
+        subscribeOnDataSource(repository.getAppSettings()) { settings, state ->
             state.copy(
                 isDarkMode = settings.isDarkMode,
                 isBigText = settings.isBigText
@@ -76,7 +82,7 @@ class ArticleViewModel(private val articleId: String) :
     }
 
     override fun getArticlePersonalInfo(): LiveData<ArticlePersonalInfo?> {
-       return repository.loadArticlePersonalInfo(articleId)
+        return repository.loadArticlePersonalInfo(articleId)
     }
 
     override fun handleNightMode() {
@@ -116,7 +122,7 @@ class ArticleViewModel(private val articleId: String) :
             repository.updateArticlePersonalInfo(info.copy(isBookmark = !info.isBookmark))
         }
         toggleBookmark()
-        val message = if(currentState.isBookmark) Notify.TextMessage("Add to bookmarks")
+        val message = if (currentState.isBookmark) Notify.TextMessage("Add to bookmarks")
         else {
             Notify.ActionMessage(
                 msg = "Remove from bookmarks",
@@ -128,12 +134,12 @@ class ArticleViewModel(private val articleId: String) :
     }
 
     override fun handleLike() {
-       val toggleLike = {
+        val toggleLike = {
             val info = currentState.toArticlePersonalInfo()
-           repository.updateArticlePersonalInfo(info.copy(isLike = !info.isLike))
-       }
+            repository.updateArticlePersonalInfo(info.copy(isLike = !info.isLike))
+        }
         toggleLike()
-        val message = if(currentState.isLike) Notify.TextMessage("Mark is liked")
+        val message = if (currentState.isLike) Notify.TextMessage("Mark is liked")
         else {
             Notify.ActionMessage(
                 msg = "Don`t like it anymore",
@@ -144,9 +150,17 @@ class ArticleViewModel(private val articleId: String) :
         notify(message)
     }
 
+    fun handleUpResult() {
+
+    }
+
+    fun handleDownResult() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
 
 }
+
 
 
 data class ArticleState(
@@ -171,6 +185,14 @@ data class ArticleState(
     val poster: String? = null,
     val content: List<Any> = emptyList(),
     val reviews: List<Any> = emptyList()
+) : IViewModelState {
+    override fun save(outState: Bundle) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun restore(savedState: android.os.Bundle): ru.skillbranch.skillarticles.viewmodels.base.IViewModelState {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
 
-)
+}

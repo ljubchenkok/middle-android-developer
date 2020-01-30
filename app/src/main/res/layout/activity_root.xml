@@ -50,7 +50,7 @@
         app:layout_dodgeInsetEdges="bottom"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
-        app:layout_behavior="ru.skillbranch.skillarticles.ui.custom.behaviors.ArticleSubmenu"
+        app:layout_behavior="ru.skillbranch.skillarticles.ui.custom.behaviors.SubmenuBehavior"
         />
 
     <ru.skillbranch.skillarticles.ui.custom.Bottombar

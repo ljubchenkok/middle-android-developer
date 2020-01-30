@@ -7,13 +7,11 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.marginEnd
 import androidx.core.view.marginRight
+import ru.skillbranch.skillarticles.ui.custom.ArticleSubmenu
 import ru.skillbranch.skillarticles.ui.custom.Bottombar
 
-class ArticleSubmenu<V : View>(context: Context, attrs: AttributeSet) :
+class SubmenuBehavior<V : View>(context: Context, attrs: AttributeSet) :
     CoordinatorLayout.Behavior<V>(context, attrs) {
-
-    private var dependedViewTranslationY: Float = 0f
-    private var dependedViewHeight: Float = 0f
 
     override fun onStartNestedScroll(
         coordinatorLayout: CoordinatorLayout,
@@ -26,24 +24,6 @@ class ArticleSubmenu<V : View>(context: Context, attrs: AttributeSet) :
         return axes == ViewCompat.SCROLL_AXIS_VERTICAL
     }
 
-    override fun onNestedPreScroll(
-        coordinatorLayout: CoordinatorLayout,
-        child: V,
-        target: View,
-        dx: Int,
-        dy: Int,
-        consumed: IntArray,
-        type: Int
-    ) {
-        super.onNestedPreScroll(coordinatorLayout, child, target, dx, dy, consumed, type)
-
-
-        if (dependedViewTranslationY != 0f)
-            child.translationX =
-                dependedViewTranslationY * (child.width + child.marginEnd) / dependedViewHeight
-        else child.translationX = 0f
-    }
-
     override fun layoutDependsOn(parent: CoordinatorLayout, child: V, dependency: View): Boolean {
         return dependency is Bottombar
     }
@@ -53,15 +33,17 @@ class ArticleSubmenu<V : View>(context: Context, attrs: AttributeSet) :
         dependency: View
     ): Boolean {
         super.onDependentViewChanged(parent, child, dependency)
-        if (dependency.translationY != dependedViewTranslationY) {
-            dependedViewTranslationY = dependency.translationY
-            dependedViewHeight = dependency.height.toFloat()
-
-
-        }
-        val n = 0
+        animate(child, dependency)
         return false
     }
+
+    private fun animate(child: View, dependency: View) {
+        if(dependency.translationY > 0f && (child as ArticleSubmenu).isOpen) {
+            val fraction = dependency.translationY / dependency.height
+            child.translationX = (child.width + child.marginEnd) * fraction
+        } else child.translationX = 0f
+    }
+
 
 
 }

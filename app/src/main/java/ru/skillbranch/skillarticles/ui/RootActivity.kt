@@ -148,9 +148,8 @@ class RootActivity : AppCompatActivity() {
     }
 
     private fun setupMenu(searchItem: MenuItem) {
-
         val searchView = searchItem.actionView as SearchView
-        searchView.queryHint = "Search"
+        searchView.queryHint = getString(R.string.article_search_placeholder)
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return true
@@ -174,10 +173,6 @@ class RootActivity : AppCompatActivity() {
                 return true
             }
         })
-
-        val textView = searchView.findViewById<SearchView.SearchAutoComplete>(R.id.search_src_text)
-        textView.setTextColor(getColor(R.color.color_on_article_bar))
-        textView.setHintTextColor(getColor(R.color.color_on_article_bar))
     }
 
     override fun onDestroy() {

@@ -19,9 +19,9 @@ abstract class BaseActivity<T : BaseViewModel<out IViewModelState>> : AppCompatA
         super.onCreate(savedInstanceState)
         setContentView(layout)
         setupViews()
-//        binding.onFinishInflate()
-//        viewModel.observeState(this){binding.bind(it)}
-//        viewModel.observeNotifications(this){renderNotification(it)}
+        binding.onFinishInflate()
+        viewModel.observeState(this){binding.bind(it)}
+        viewModel.observeNotifications(this){renderNotification(it)}
     }
 
 //    override fun onSaveInstanceState(outState: Bundle) {

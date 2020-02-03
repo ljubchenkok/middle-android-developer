@@ -37,6 +37,8 @@ abstract class BaseViewModel<T : IViewModelState>(initState: T) : ViewModel() {
         state.value = updatedState
     }
 
+
+
     /***
      * функция для создания уведомления пользователя о событии (событие обрабатывается только один раз)
      * соответсвенно при изменении конфигурации и пересоздании Activity уведомление не будет вызвано

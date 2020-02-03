@@ -2,6 +2,7 @@ package ru.skillbranch.skillarticles.viewmodels
 
 
 import android.os.Bundle
+import androidx.core.os.bundleOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import ru.skillbranch.skillarticles.data.ArticleData
@@ -22,17 +23,6 @@ class ArticleViewModel(private val articleId: String) :
 
     private val repository = ArticleRepository
     private val _searchMode = MutableLiveData<Event<Pair<Boolean, String>>>()
-    val searchMode: LiveData<Event<Pair<Boolean, String>>>
-        get() = _searchMode
-
-    fun setSearchMode() {
-        _searchMode.value = Event(
-            Pair(
-                currentState.isSearch, currentState.searchQuery ?: ""
-            )
-        )
-    }
-
     init {
         subscribeOnDataSource(getArticleData()) { article, state ->
             article ?: return@subscribeOnDataSource null
@@ -117,7 +107,7 @@ class ArticleViewModel(private val articleId: String) :
         query ?: return
         val result = (currentState.content.firstOrNull() as? String).indexesOf(query)
             .map { it to it + query.length }
-        updateState { it.copy(searchQuery = query, searchResult = result) }
+        updateState { it.copy(searchQuery = query, searchResults = result) }
     }
 
     override fun handleBookmark() {
@@ -178,7 +168,7 @@ data class ArticleState(
     val isDarkMode: Boolean = false,
     val isSearch: Boolean = false,
     val searchQuery: String? = null,
-    val searchResult: List<Pair<Int, Int>> = emptyList(),
+    val searchResults: List<Pair<Int, Int>> = emptyList(),
     val searchPosition: Int = 0,
     val shareLink: String? = null,
     val title: String? = null,
@@ -191,11 +181,24 @@ data class ArticleState(
     val reviews: List<Any> = emptyList()
 ) : IViewModelState {
     override fun save(outState: Bundle) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        outState.putAll(
+            // только эти, остальные можно подтянуть из персистентного хранилища
+            bundleOf(
+                "isSearch" to isSearch,
+                "searchQuery" to searchQuery,
+                "searchResults" to searchResults,
+                "searchPosition" to searchPosition
+            )
+        )
     }
 
-    override fun restore(savedState: android.os.Bundle): ru.skillbranch.skillarticles.viewmodels.base.IViewModelState {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun restore(savedState: Bundle): ArticleState {
+        return copy(
+            isSearch = savedState["isSearch"] as Boolean,
+            searchQuery = savedState["searchQuery"] as? String,
+            searchResults = savedState["searchResults"] as List<Pair<Int, Int>>,
+            searchPosition = savedState["searchPosition"] as Int
+        )
     }
 
 

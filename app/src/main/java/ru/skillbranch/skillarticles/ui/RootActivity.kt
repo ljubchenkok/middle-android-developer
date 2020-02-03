@@ -13,12 +13,12 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.text.getSpans
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_root.*
 import kotlinx.android.synthetic.main.layout_bottombar.*
 import kotlinx.android.synthetic.main.layout_submenu.*
+import kotlinx.android.synthetic.main.search_view_layout.*
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.extensions.dpToIntPx
 import ru.skillbranch.skillarticles.extensions.setMarginOptionally
@@ -43,7 +43,7 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
         val vmFactory = ViewModelFactory("0")
         ViewModelProviders.of(this, vmFactory).get(ArticleViewModel::class.java)
     }
-    override val binding: Binding by lazy { ArticleBinding() }
+    override val binding: ArticleBinding by lazy { ArticleBinding() }
 
     val bgColor by AttrValue(R.attr.colorSecondary)
     val fgColor by AttrValue(R.attr.colorOnSecondary)
@@ -109,11 +109,11 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
         btn_settings.setOnClickListener { viewModel.handleToggleMenu() }
 
         btn_result_up.setOnClickListener {
-            //            if (search_view.hasFocus()) search_view.clearFocus()
+            if (search_view.hasFocus()) search_view.clearFocus()
             viewModel.handleUpResult()
         }
         btn_result_down.setOnClickListener {
-            //            if (search_view.hasFocus()) search_view.clearFocus()
+           if (search_view.hasFocus()) search_view.clearFocus()
             viewModel.handleDownResult()
         }
         btn_search_close.setOnClickListener {
@@ -127,17 +127,6 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
         val searchItem = menu?.findItem(R.id.action_search)
         if (searchItem != null) {
             setupMenu(searchItem)
-            viewModel.searchMode.observe(this, Observer {
-                it.getContentIfNotHandled()?.let { pair ->
-                    if (pair.first) {
-                        val searchView = searchItem.actionView as SearchView
-                        searchItem.expandActionView()
-                        searchView.setQuery(pair.second, false)
-                        searchView.clearFocus()
-
-                    }
-                }
-            })
         }
         return super.onCreateOptionsMenu(menu)
     }
@@ -145,6 +134,12 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
     private fun setupMenu(searchItem: MenuItem) {
         val searchView = searchItem.actionView as SearchView
         searchView.queryHint = getString(R.string.article_search_placeholder)
+        if (binding.isSearch) {
+            searchItem.expandActionView()
+            searchView.setQuery(binding.searchQuery, false)
+            if (binding.isFocusedSearch) searchView.requestFocus()
+            else searchView.clearFocus()
+        }
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return true
@@ -170,10 +165,6 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
         })
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        viewModel.setSearchMode()
-    }
 
     private fun setupToolbar() {
         setSupportActionBar(toolbar)
@@ -217,7 +208,7 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
         content.getSpans<SearchFocusSpan>().forEach { content.removeSpan(it) }
         if (spans.isNotEmpty()) {
             val result = spans[searchPosition]
-             Selection.setSelection(content, content.getSpanStart(result))
+            Selection.setSelection(content, content.getSpanStart(result))
             content.setSpan(
                 SearchFocusSpan(bgColor, fgColor),
                 content.getSpanStart(result),
@@ -280,7 +271,8 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
             tv_text_content.setText(it, TextView.BufferType.SPANNABLE)
             tv_text_content.movementMethod = ScrollingMovementMethod()
         }
-        private var searchQuery: String? = null
+        var searchQuery: String? = null
+        var isFocusedSearch: Boolean = false
 
         private var isDarkMode: Boolean by RenderProp(false, false) {
             switch_mode.isChecked = it
@@ -301,7 +293,7 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
                     renderSearchResult(sr)
                     renderSearchPosition(sp)
                 }
-                if(!ilc && !iss) clearSearchResult()
+                if (!ilc && !iss) clearSearchResult()
 
                 bottombar.bindSearchInfo(sr.size, sp)
             }
@@ -324,16 +316,16 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
             isSearch = data.isSearch
             searchQuery = data.searchQuery
             searchPosition = data.searchPosition
-            searchResults = data.searchResult
+            searchResults = data.searchResults
 
         }
 
         override fun saveUi(outState: Bundle) {
-
+            outState.putBoolean(::isFocusedSearch.name, search_view?.hasFocus() ?: false)
         }
 
         override fun restoreUi(savedState: Bundle) {
-
+            isFocusedSearch = savedState.getBoolean(::isFocusedSearch.name)
         }
 
     }

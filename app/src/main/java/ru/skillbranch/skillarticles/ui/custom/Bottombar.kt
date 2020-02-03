@@ -1,5 +1,7 @@
 package ru.skillbranch.skillarticles.ui.custom
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.os.Parcel
 import android.os.Parcelable
@@ -70,6 +72,7 @@ class Bottombar @JvmOverloads constructor(
         )
         va.doOnEnd { reveal.isVisible = false }
         va.start()
+
     }
 
     private fun animateShowSearchPanel() {

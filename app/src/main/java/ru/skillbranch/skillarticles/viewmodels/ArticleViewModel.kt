@@ -23,6 +23,7 @@ class ArticleViewModel(private val articleId: String) :
 
     private val repository = ArticleRepository
     private val _searchMode = MutableLiveData<Event<Pair<Boolean, String>>>()
+
     init {
         subscribeOnDataSource(getArticleData()) { article, state ->
             article ?: return@subscribeOnDataSource null
@@ -107,7 +108,17 @@ class ArticleViewModel(private val articleId: String) :
         query ?: return
         val result = (currentState.content.firstOrNull() as? String).indexesOf(query)
             .map { it to it + query.length }
-        updateState { it.copy(searchQuery = query, searchResults = result) }
+        this.state.value?.searchPosition.let {
+            val searchPosition = if (this.state.value?.searchPosition!! < result.size) 0
+            else this.state.value?.searchPosition!!
+            updateState {
+                it.copy(
+                    searchQuery = query,
+                    searchResults = result,
+                    searchPosition = searchPosition
+                )
+            }
+        }
     }
 
     override fun handleBookmark() {
@@ -145,12 +156,12 @@ class ArticleViewModel(private val articleId: String) :
     }
 
     fun handleUpResult() {
-         updateState { it.copy(searchPosition = it.searchPosition.dec())}
+        updateState { it.copy(searchPosition = it.searchPosition.dec()) }
 
     }
 
     fun handleDownResult() {
-        updateState { it.copy(searchPosition = it.searchPosition.inc())}
+        updateState { it.copy(searchPosition = it.searchPosition.inc()) }
     }
 
 

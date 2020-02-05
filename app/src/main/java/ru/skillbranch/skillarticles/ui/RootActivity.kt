@@ -14,8 +14,6 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.text.getSpans
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_root.*
 import kotlinx.android.synthetic.main.layout_bottombar.*
@@ -35,8 +33,6 @@ import ru.skillbranch.skillarticles.viewmodels.ArticleState
 import ru.skillbranch.skillarticles.viewmodels.ArticleViewModel
 import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
 import ru.skillbranch.skillarticles.viewmodels.base.Notify
-import ru.skillbranch.skillarticles.viewmodels.base.ViewModelDelegate
-import ru.skillbranch.skillarticles.viewmodels.base.ViewModelFactory
 
 
 class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
@@ -113,11 +109,15 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
         btn_settings.setOnClickListener { viewModel.handleToggleMenu() }
 
         btn_result_up.setOnClickListener {
-            if (search_view.hasFocus()) search_view.clearFocus()
+            if (search_view.hasFocus())
+                search_view.clearFocus()
+            tv_text_content.requestFocus()
             viewModel.handleUpResult()
         }
         btn_result_down.setOnClickListener {
-           if (search_view.hasFocus()) search_view.clearFocus()
+            if (search_view.hasFocus())
+                search_view.clearFocus()
+            tv_text_content.requestFocus()
             viewModel.handleDownResult()
         }
         btn_search_close.setOnClickListener {

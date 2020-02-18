@@ -69,7 +69,7 @@ class ArticleViewModel(private val articleId: String) :
         return repository.getArticle(articleId)
     }
 
-    override fun getArticleContent(): LiveData<List<Any>?> {
+    override fun getArticleContent(): LiveData<String?> {
         return repository.loadArticleContent(articleId)
     }
 
@@ -106,8 +106,10 @@ class ArticleViewModel(private val articleId: String) :
 
     override fun handleSearch(query: String?) {
         query ?: return
-        val result = (currentState.content.firstOrNull() as? String).indexesOf(query)
+        val result = (currentState.content
+            .indexesOf(query)
             .map { it to it + query.length }
+                )
         updateState {
             it.copy(
                 searchQuery = query,
@@ -126,7 +128,7 @@ class ArticleViewModel(private val articleId: String) :
         val message = if (currentState.isBookmark) Notify.TextMessage("Add to bookmarks")
         else {
             Notify.ActionMessage(
-                msg = "Remove from bookmarks",
+                message = "Remove from bookmarks",
                 actionLabel = "No",
                 actionHandler = toggleBookmark
             )
@@ -143,7 +145,7 @@ class ArticleViewModel(private val articleId: String) :
         val message = if (currentState.isLike) Notify.TextMessage("Mark is liked")
         else {
             Notify.ActionMessage(
-                msg = "Don`t like it anymore",
+                message = "Don`t like it anymore",
                 actionLabel = "No, still like it",
                 actionHandler = toggleLike
             )
@@ -184,7 +186,7 @@ data class ArticleState(
     val date: String? = null,
     val author: Any? = null,
     val poster: String? = null,
-    val content: List<Any> = emptyList(),
+    val content: String? = null,
     val reviews: List<Any> = emptyList()
 ) : IViewModelState {
     override fun save(outState: Bundle) {

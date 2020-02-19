@@ -46,28 +46,17 @@ object MarkdownParser {
         val markdownText = parse(string)
         var result = ""
         for (e in markdownText.elements) {
-            if (e is Element.Text) result += e.text
-            else result += getTextFromElement(e)
-
+            result += if (e is Element.Text) e.text
+            else getTextFromElement(e)
         }
         return result
     }
 
-    private fun getTextFromElement(element: Element): String {
-        var result = ""
-        if (
-            element is Element.Text ||
-            element is Element.Header ||
-            element is Element.Rule ||
-            element is Element.Link
-        ) result += element.text
-        if (element.elements.size == 0) return result
-        else {
-            for (e in element.elements) {
-                result += getTextFromElement(e)
-            }
+    private fun getTextFromElement(element: Element): CharSequence {
+        return if (element.elements.isNotEmpty()){
+                element.elements.fold("") { result, e -> result + getTextFromElement(e) }
         }
-        return result
+        else element.text
     }
 
 

@@ -18,14 +18,12 @@ object MarkdownParser {
     private const val INLINE_GROUP = "((?<!`)`[^`\\s].*?[^`\\s]?`(?!`))"
     private const val LINK_GROUP = "(\\[[^\\[\\]]*?]\\(.+?\\)|^\\[*?]\\(.*?\\))"
     private const val BLOCK_CODE_GROUP = "(\\n```[\\n\\s\\S]*?```\\n)"
-//    private const val ORDER_LIST_GROUP = "" //TODO implement me
+    private const val ORDER_LIST_GROUP = "(^\\d+\\. .*?\n)" //TODO implement me
 
     //result regex
     private const val MARKDOWN_GROUPS = "$UNORDERED_LIST_ITEM_GROUP|$HEADER_GROUP|$QUOTE_GROUP" +
-            "|$ITALIC_GROUP|$BOLD_GROUP|$STRIKE_GROUP|$RULE_GROUP|$INLINE_GROUP|$LINK_GROUP|$BLOCK_CODE_GROUP"
-//    private const val MARKDOWN_GROUPS = "$UNORDERED_LIST_ITEM_GROUP|$HEADER_GROUP|$QUOTE_GROUP" +
-//            "|$ITALIC_GROUP|$BOLD_GROUP|$STRIKE_GROUP|$RULE_GROUP|$INLINE_GROUP|$LINK_GROUP"
-//             |$BLOCK_CODE_GROUP|$ORDER_LIST_GROUP optionally
+            "|$ITALIC_GROUP|$BOLD_GROUP|$STRIKE_GROUP|$RULE_GROUP|$INLINE_GROUP|$LINK_GROUP" +
+            "|$BLOCK_CODE_GROUP|$ORDER_LIST_GROUP"
 
     private val elementsPattern by lazy { Pattern.compile(MARKDOWN_GROUPS, Pattern.MULTILINE) }
 
@@ -93,7 +91,7 @@ object MarkdownParser {
             }
             var text: CharSequence
             //groups range for iterate by groups (1..9) or (1..11) optionally
-            val groups = 1..10
+            val groups = 1..11
             var group = -1
             for (gr in groups) {
                 if (matcher.group(gr) != null) {
@@ -193,9 +191,14 @@ object MarkdownParser {
                 }
 //
 //                //11 -> NUMERIC LIST
-//                11 -> {
-//                    //TODO implement me
-//                }
+                11 -> {
+                    text = string.subSequence(startIndex, endIndex.minus(1))
+                    val (ordered: String, string: String) = "(\\d+). (.*)".toRegex().find(text)!!.destructured
+                    val subs = findElements(text)
+                    val element = Element.OrderedListItem(ordered, string, subs)
+                    parents.add(element)
+                    lastStartIndex = endIndex
+                }
             }
 
         }

@@ -1,7 +1,5 @@
 package ru.skillbranch.skillarticles.markdown
 
-import android.util.Log
-import androidx.core.graphics.green
 import java.util.regex.Pattern
 
 object MarkdownParser {
@@ -13,7 +11,8 @@ object MarkdownParser {
     private const val HEADER_GROUP = "(^#{1,6} .+?$)"
     private const val QUOTE_GROUP = "(^> .+?$)"
     private const val ITALIC_GROUP = "((?<!\\*)\\*[^*].*?[^*]?\\*(?!\\*)|(?<!_)_[^_].*?[^_]?_(?!_))"
-    private const val BOLD_GROUP ="((?<!\\*)\\*{2}[^*].*?[^*]?\\*{2}(?!\\*)|(?<!_)_{2}[^_].*?[^_]?_{2}(?!_))"
+    private const val BOLD_GROUP =
+        "((?<!\\*)\\*{2}[^*].*?[^*]?\\*{2}(?!\\*)|(?<!_)_{2}[^_].*?[^_]?_{2}(?!_))"
     private const val STRIKE_GROUP = "((?<!~)~{2}[^*].*?[^*]?~{2}(?!~))"
     private const val RULE_GROUP = "(^[-*_]{3}$)"
     private const val INLINE_GROUP = "((?<!`)`[^`\\s].*?[^`\\s]?`(?!`))"
@@ -43,26 +42,34 @@ object MarkdownParser {
      * clear markdown text to string without markdown characters
      */
     fun clear(string: String?): String? {
-        var result = string ?: return null
-        result = removeSubstring("(#{1,6} ).+\n".toRegex(), result)
-        result = removeSubstring("\n([*\\-+>] ).+\n".toRegex(), result)
-        result = removeSubstring(
-            "(?<!\\*)(\\*{2})[^*].*?[^*]?(\\*{2})(?!\\*)|(?<!_)(_{2})[^_].*?[^_]?(_{2})(?!_)".toRegex(),
-            result
-        )
-        result = removeSubstring(
-            "(?<!\\*)(\\*)[^*].*?[^*]?(\\*)(?!\\*)|(?<!_)(_)[^_].*?[^_]?(_)(?!_)".toRegex(),
-            result
-        )
-        result = removeSubstring("(?<!\\~)(~{2})[^*].*?[^*]?(~{2})(?!\\~)".toRegex(), result)
-        result = removeSubstring("(?<!\n')\\s(`)[^`\\s].+?[^'](`)\\s(?!')".toRegex(), result)
-        result = removeSubstring(
-            "(?<!\n\\[')\\s(\\[)[^\\[].+?[^\\]](\\]\\(.+?\\))(?!\\]')".toRegex(),
-            result
-        )
-        result = removeSubstring("\n([-_*]{3})".toRegex(), result)
+        if (string == null) return null
+        val markdownText = parse(string)
+        var result = ""
+        for (e in markdownText.elements) {
+            if (e is Element.Text) result += e.text
+            else result += getTextFromElement(e)
+
+        }
         return result
     }
+
+    private fun getTextFromElement(element: Element): String {
+        var result = ""
+        if (
+            element is Element.Text ||
+            element is Element.Header ||
+            element is Element.Rule ||
+            element is Element.Link
+        ) result += element.text
+        if (element.elements.size == 0) return result
+        else {
+            for (e in element.elements) {
+                result += getTextFromElement(e)
+            }
+        }
+        return result
+    }
+
 
     fun removeSubstring(regex: Regex, string: String): String {
         var result = string
@@ -124,7 +131,7 @@ object MarkdownParser {
                     val reg = "^#{1,6}".toRegex().find(string.subSequence(startIndex, endIndex))
                     val level = reg!!.value.length
                     text = string.subSequence(startIndex.plus(level.inc()), endIndex)
-                    parents.add(Element.Header(level,text))
+                    parents.add(Element.Header(level, text))
                     lastStartIndex = endIndex
                 }
 
@@ -170,7 +177,6 @@ object MarkdownParser {
                     lastStartIndex = endIndex
                 }
 //
-                //RULE
                 8 -> {
                     text = string.subSequence(startIndex.inc(), endIndex.dec())
                     val subs = findElements(text)
@@ -182,7 +188,7 @@ object MarkdownParser {
                 //LINK
                 9 -> {
                     text = string.subSequence(startIndex, endIndex)
-                    val (title:String, link:String) = "\\[(.*)]\\((.*)\\)".toRegex().find(text)!!.destructured
+                    val (title: String, link: String) = "\\[(.*)]\\((.*)\\)".toRegex().find(text)!!.destructured
                     val element = Element.Link(link, title)
                     parents.add(element)
                     lastStartIndex = endIndex
@@ -199,7 +205,7 @@ object MarkdownParser {
             }
 
         }
-        if(lastStartIndex < string.length){
+        if (lastStartIndex < string.length) {
             val text = string.subSequence(lastStartIndex, string.length)
             parents.add(Element.Text(text))
         }

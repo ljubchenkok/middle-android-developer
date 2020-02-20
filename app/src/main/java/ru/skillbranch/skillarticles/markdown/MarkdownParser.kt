@@ -22,8 +22,8 @@ object MarkdownParser {
 
     //result regex
     private const val MARKDOWN_GROUPS = "$UNORDERED_LIST_ITEM_GROUP|$HEADER_GROUP|$QUOTE_GROUP" +
-            "|$ITALIC_GROUP|$BOLD_GROUP|$STRIKE_GROUP|$RULE_GROUP|$INLINE_GROUP|$LINK_GROUP" +
-            "|$BLOCK_CODE_GROUP|$ORDER_LIST_GROUP"
+            "|$ITALIC_GROUP|$BOLD_GROUP|$STRIKE_GROUP|$RULE_GROUP|$INLINE_GROUP|$LINK_GROUP" //+
+//            "|$BLOCK_CODE_GROUP|$ORDER_LIST_GROUP"
 
     private val elementsPattern by lazy { Pattern.compile(MARKDOWN_GROUPS, Pattern.MULTILINE) }
 
@@ -91,7 +91,7 @@ object MarkdownParser {
             }
             var text: CharSequence
             //groups range for iterate by groups (1..9) or (1..11) optionally
-            val groups = 1..11
+            val groups = 1..9
             var group = -1
             for (gr in groups) {
                 if (matcher.group(gr) != null) {
@@ -182,23 +182,23 @@ object MarkdownParser {
                     lastStartIndex = endIndex
                 }
                 //10 -> BLOCK CODE - optionally
-                10 -> {
-                    text = string.subSequence(startIndex.plus(3), endIndex.minus(3))
-                    val subs = findElements(text)
-                    val element = Element.BlockCode(Element.BlockCode.Type.MIDDLE, text, subs)
-                    parents.add(element)
-                    lastStartIndex = endIndex
-                }
-//
-//                //11 -> NUMERIC LIST
-                11 -> {
-                    text = string.subSequence(startIndex, endIndex)
-                    val (ordered: String, string: String) = "(\\d+). (.*)".toRegex().find(text)!!.destructured
-                    val subs = findElements(text)
-                    val element = Element.OrderedListItem(ordered, string, subs)
-                    parents.add(element)
-                    lastStartIndex = endIndex
-                }
+//                10 -> {
+//                    text = string.subSequence(startIndex.plus(3), endIndex.minus(3))
+//                    val subs = findElements(text)
+//                    val element = Element.BlockCode(Element.BlockCode.Type.MIDDLE, text, subs)
+//                    parents.add(element)
+//                    lastStartIndex = endIndex
+//                }
+////
+////                //11 -> NUMERIC LIST
+//                11 -> {
+//                    text = string.subSequence(startIndex, endIndex)
+//                    val (ordered: String, string: String) = "(\\d+). (.*)".toRegex().find(text)!!.destructured
+//                    val subs = findElements(text)
+//                    val element = Element.OrderedListItem(ordered, string, subs)
+//                    parents.add(element)
+//                    lastStartIndex = endIndex
+//                }
             }
 
         }

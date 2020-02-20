@@ -30,7 +30,7 @@ class OrderedListSpan(
     ) {
         if (isFirstLine) {
             paint.forText {
-                canvas.drawText("$order", currentMarginLocation + gapWidth, lineBaseline.toFloat(), paint)
+                canvas.drawText("$order.", currentMarginLocation + gapWidth, lineBaseline.toFloat(), paint)
             }
         }
     }

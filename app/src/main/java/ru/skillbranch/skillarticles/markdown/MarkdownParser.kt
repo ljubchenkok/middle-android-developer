@@ -51,10 +51,9 @@ object MarkdownParser {
     }
 
     private fun getTextFromElement(element: Element): CharSequence {
-        return if (element.elements.isNotEmpty()){
-                element.elements.fold("") { result, e -> result + getTextFromElement(e) }
-        }
-        else element.text
+        return if (element.elements.isNotEmpty()) {
+            element.elements.fold("") { result, e -> result + getTextFromElement(e) }
+        } else element.text
     }
 
 
@@ -181,16 +180,7 @@ object MarkdownParser {
                     parents.add(element)
                     lastStartIndex = endIndex
                 }
-                //10 -> BLOCK CODE - optionally
-//                10 -> {
-//                    text = string.subSequence(startIndex.plus(3), endIndex.minus(3))
-//                    val subs = findElements(text)
-//                    val element = Element.BlockCode(Element.BlockCode.Type.MIDDLE, text, subs)
-//                    parents.add(element)
-//                    lastStartIndex = endIndex
-//                }
-////
-//                //11 -> NUMERIC LIST
+//                //10 -> NUMERIC LIST
                 10 -> {
                     text = string.subSequence(startIndex, endIndex)
                     val (ordered: String, string: String) = "(\\d+). (.*)".toRegex().find(text)!!.destructured
@@ -199,6 +189,38 @@ object MarkdownParser {
                     parents.add(element)
                     lastStartIndex = endIndex
                 }
+                //11 -> BLOCK CODE - optionally
+//                11 -> {
+//                    text = string.subSequence(startIndex.plus(3), endIndex.minus(3))
+//                    val lines = text.split("\n")
+//                    for (i in lines.indices) {
+//                        val element = when {
+//                            i == 0 && i == lines.size - 1 -> Element.BlockCode(
+//                                Element.BlockCode.Type.SINGLE,
+//                                lines[i],
+//                                findElements(lines[i])
+//                            )
+//                            i == 0 -> Element.BlockCode(
+//                                Element.BlockCode.Type.START,
+//                                lines[i] + "\n",
+//                                findElements(lines[i])
+//                            )
+//                            i == lines.size - 1 -> Element.BlockCode(
+//                                Element.BlockCode.Type.END,
+//                                lines[i],
+//                                findElements(lines[i])
+//                            )
+//                            else -> Element.BlockCode(
+//                                Element.BlockCode.Type.MIDDLE,
+//                                lines[i] + "\n",
+//                                findElements(lines[i])
+//                            )
+//                        }
+//                        parents.add(element)
+//
+//                    }
+//                    lastStartIndex = endIndex
+//                }
             }
 
         }

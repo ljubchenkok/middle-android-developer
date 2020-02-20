@@ -17,8 +17,8 @@ object MarkdownParser {
     private const val RULE_GROUP = "(^[-*_]{3}$)"
     private const val INLINE_GROUP = "((?<!`)`[^`\\s].*?[^`\\s]?`(?!`))"
     private const val LINK_GROUP = "(\\[[^\\[\\]]*?]\\(.+?\\)|^\\[*?]\\(.*?\\))"
-    private const val BLOCK_CODE_GROUP = "(\\n```[\\n\\s\\S]*?```\\n)"
-    private const val ORDER_LIST_GROUP = "(^\\d+\\. .*?\n)" //TODO implement me
+    private const val BLOCK_CODE_GROUP = "((?<=\\n)```[\\n\\s\\S]*?```(?=\\n))"
+    private const val ORDER_LIST_GROUP = "((?<=\\n)^\\d+\\. .*?(?=\\n))"
 
     //result regex
     private const val MARKDOWN_GROUPS = "$UNORDERED_LIST_ITEM_GROUP|$HEADER_GROUP|$QUOTE_GROUP" +
@@ -183,7 +183,7 @@ object MarkdownParser {
                 }
                 //10 -> BLOCK CODE - optionally
                 10 -> {
-                    text = string.subSequence(startIndex.plus(4), endIndex.minus(4))
+                    text = string.subSequence(startIndex.plus(3), endIndex.minus(3))
                     val subs = findElements(text)
                     val element = Element.BlockCode(Element.BlockCode.Type.MIDDLE, text, subs)
                     parents.add(element)
@@ -192,7 +192,7 @@ object MarkdownParser {
 //
 //                //11 -> NUMERIC LIST
                 11 -> {
-                    text = string.subSequence(startIndex, endIndex.minus(1))
+                    text = string.subSequence(startIndex, endIndex)
                     val (ordered: String, string: String) = "(\\d+). (.*)".toRegex().find(text)!!.destructured
                     val subs = findElements(text)
                     val element = Element.OrderedListItem(ordered, string, subs)

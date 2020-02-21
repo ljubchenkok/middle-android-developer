@@ -23,7 +23,7 @@ class BlockCodeSpan(
     var rect = RectF()
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     var path = Path()
-    var measureWidth: Int = 0
+
 
 
     override fun getSize(
@@ -36,11 +36,11 @@ class BlockCodeSpan(
         if (fm != null) {
             when(type){
                 Element.BlockCode.Type.SINGLE -> {
-                    fm.ascent = (fm.ascent * 0.85f - 2 * padding).toInt()
-                    fm.descent = (fm.descent * 0.85f + 2 * padding).toInt()
+                    fm.ascent = (paint.ascent() - 2 *padding).toInt()
+                    fm.descent = (paint.descent() + 2 *padding).toInt()
                 }
-                Element.BlockCode.Type.START -> fm.ascent = (fm.ascent * 0.85f - 2 * padding).toInt()
-                Element.BlockCode.Type.END -> fm.descent = (fm.descent * 0.85f + 2 * padding).toInt()
+                Element.BlockCode.Type.START -> fm.ascent = (paint.ascent()  - 2 * padding).toInt()
+                Element.BlockCode.Type.END -> fm.descent = (paint.descent()  + 2 * padding).toInt()
 
             }
         }

@@ -1,6 +1,7 @@
 package ru.skillbranch.skillarticles.markdown
 
 import android.content.Context
+import android.graphics.Color
 import android.graphics.Typeface
 import android.text.SpannableStringBuilder
 import android.text.SpannedString
@@ -100,7 +101,11 @@ class MarkdownBuilder(context: Context) {
                         append(element.text)
                     }
                 }
-                else -> append(element.text)
+                is Element.BlockCode -> {
+                    inSpans(BlockCodeSpan(colorOnSurface, Color.GRAY, cornerRadius, gap, element.type)){
+                        append(element.text)
+                    }
+                }
             }
         }
     }

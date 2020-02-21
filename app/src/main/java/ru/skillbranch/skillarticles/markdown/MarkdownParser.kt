@@ -23,7 +23,7 @@ object MarkdownParser {
     //result regex
     private const val MARKDOWN_GROUPS = "$UNORDERED_LIST_ITEM_GROUP|$HEADER_GROUP|$QUOTE_GROUP" +
             "|$ITALIC_GROUP|$BOLD_GROUP|$STRIKE_GROUP|$RULE_GROUP|$INLINE_GROUP|$LINK_GROUP" +
-            "|$ORDER_LIST_GROUP" //|$BLOCK_CODE_GROUP"
+            "|$ORDER_LIST_GROUP|$BLOCK_CODE_GROUP"
 
     private val elementsPattern by lazy { Pattern.compile(MARKDOWN_GROUPS, Pattern.MULTILINE) }
 
@@ -82,7 +82,6 @@ object MarkdownParser {
         var lastStartIndex = 0
 
         loop@ while (matcher.find(lastStartIndex)) {
-            val substring = string.substring(lastStartIndex)
             val startIndex = matcher.start()
             val endIndex = matcher.end()
             if (lastStartIndex < startIndex) {
@@ -90,7 +89,7 @@ object MarkdownParser {
             }
             var text: CharSequence
             //groups range for iterate by groups (1..9) or (1..11) optionally
-            val groups = 1..10
+            val groups = 1..11
             var group = -1
             for (gr in groups) {
                 if (matcher.group(gr) != null) {
@@ -190,37 +189,33 @@ object MarkdownParser {
                     lastStartIndex = endIndex
                 }
                 //11 -> BLOCK CODE - optionally
-//                11 -> {
-//                    text = string.subSequence(startIndex.plus(3), endIndex.minus(3))
-//                    val lines = text.split("\n")
-//                    for (i in lines.indices) {
-//                        val element = when {
-//                            i == 0 && i == lines.size - 1 -> Element.BlockCode(
-//                                Element.BlockCode.Type.SINGLE,
-//                                lines[i],
-//                                findElements(lines[i])
-//                            )
-//                            i == 0 -> Element.BlockCode(
-//                                Element.BlockCode.Type.START,
-//                                lines[i] + "\n",
-//                                findElements(lines[i])
-//                            )
-//                            i == lines.size - 1 -> Element.BlockCode(
-//                                Element.BlockCode.Type.END,
-//                                lines[i],
-//                                findElements(lines[i])
-//                            )
-//                            else -> Element.BlockCode(
-//                                Element.BlockCode.Type.MIDDLE,
-//                                lines[i] + "\n",
-//                                findElements(lines[i])
-//                            )
-//                        }
-//                        parents.add(element)
-//
-//                    }
-//                    lastStartIndex = endIndex
-//                }
+                11 -> {
+                    text = string.subSequence(startIndex.plus(3), endIndex.minus(3))
+                    val lines = text.split("\n")
+                    for (i in lines.indices) {
+                        val element = when {
+                            i == 0 && i == lines.size - 1 -> Element.BlockCode(
+                                Element.BlockCode.Type.SINGLE,
+                                lines[i]
+                            )
+                            i == 0 -> Element.BlockCode(
+                                Element.BlockCode.Type.START,
+                                lines[i] + "\n"
+                            )
+                            i == lines.size - 1 -> Element.BlockCode(
+                                Element.BlockCode.Type.END,
+                                lines[i]
+                            )
+                            else -> Element.BlockCode(
+                                Element.BlockCode.Type.MIDDLE,
+                                lines[i] + "\n"
+                            )
+                        }
+                        parents.add(element)
+
+                    }
+                    lastStartIndex = endIndex
+                }
             }
 
         }

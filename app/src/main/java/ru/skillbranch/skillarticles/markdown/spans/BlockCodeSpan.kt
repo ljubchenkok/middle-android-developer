@@ -25,6 +25,7 @@ class BlockCodeSpan(
     var path = Path()
     var measureWidth: Int = 0
 
+
     override fun getSize(
         paint: Paint,
         text: CharSequence,
@@ -32,14 +33,20 @@ class BlockCodeSpan(
         end: Int,
         fm: Paint.FontMetricsInt?
     ): Int {
+        if (fm != null) {
+            when(type){
+                Element.BlockCode.Type.SINGLE -> {
+                    fm.ascent = (fm.ascent * 0.85f - 2 * padding).toInt()
+                    fm.descent = (fm.descent * 0.85f + 2 * padding).toInt()
+                }
+                Element.BlockCode.Type.START -> fm.ascent = (fm.ascent * 0.85f - 2 * padding).toInt()
+                Element.BlockCode.Type.END -> fm.descent = (fm.descent * 0.85f + 2 * padding).toInt()
 
-        paint.forText {
-            val measureText = paint.measureText(text.toString(), start, end)
-            measureWidth = (measureText + 2*padding).toInt()
+            }
         }
-        return measureWidth
-
+        return 0
     }
+
 
     override fun draw(
         canvas: Canvas,
@@ -53,30 +60,82 @@ class BlockCodeSpan(
         paint: Paint
     ) {
         paint.forBackground {
-            rect.set(x, top.toFloat(), x+measureWidth, bottom.toFloat())
-            canvas.drawRoundRect(rect,cornerRadius, cornerRadius, paint)
+            path.reset()
+            when (type) {
+                Element.BlockCode.Type.SINGLE -> {
+                    rect.set(
+                        0f,
+                        top.toFloat() + padding,
+                        canvas.width.toFloat(),
+                        bottom.toFloat() - padding
+                    )
+                    path = RoundedRect(rect, cornerRadius)
+                }
+                Element.BlockCode.Type.START -> {
+                    rect.set(
+                        0f,
+                        top.toFloat() + padding,
+                        canvas.width.toFloat(),
+                        bottom.toFloat()
+                    )
+                    path = RoundedRect(
+                        rect,
+                        cornerRadius,
+                        bl = false,
+                        br = false
+                    )
+                }
+                Element.BlockCode.Type.MIDDLE -> {
+                    rect.set(
+                        0f,
+                        top.toFloat(),
+                        canvas.width.toFloat(),
+                        bottom.toFloat()
+                    )
+                    path = RoundedRect(
+                        rect,
+                        cornerRadius,
+                        br = false,
+                        bl = false,
+                        tl = false,
+                        tr = false
+                    )
+                }
+                Element.BlockCode.Type.END -> {
+                    rect.set(
+                        0f,
+                        top.toFloat(),
+                        canvas.width.toFloat(),
+                        bottom.toFloat() - padding
+                    )
+                    path = RoundedRect(
+                        rect,
+                        cornerRadius,
+                        tr = false,
+                        tl = false
+                    )
+                }
+
+            }
+            canvas.drawPath(path, paint)
         }
 
         paint.forText {
-            canvas.drawText(text, start, end, x + padding, y.toFloat(), paint)
+            canvas.drawText("$text", start, end, x + padding, y.toFloat(), paint)
         }
 
     }
 
+
+
     private inline fun Paint.forText(block: () -> Unit) {
         val oldColor = color
-        val oldStyle = typeface?.style ?: 0
-        val oldFont = typeface
         val oldSize = textSize
-
         color = textColor
-        typeface = Typeface.create(Typeface.MONOSPACE, oldStyle)
         textSize *= 0.85f
         block()
         color = oldColor
-        typeface = oldFont
         textSize = oldSize
-
     }
 
     private inline fun Paint.forBackground(block: () -> Unit) {
@@ -88,5 +147,54 @@ class BlockCodeSpan(
         block()
         color = oldColor
         style = oldStyle
+    }
+
+
+    fun RoundedRect(
+        rect: RectF,
+        r: Float,
+        tl: Boolean = true,
+        tr: Boolean = true,
+        br: Boolean = true,
+        bl: Boolean = true
+    ): Path {
+        var rx = r
+        var ry = r
+        val path = Path()
+        if (rx < 0) rx = 0f
+        if (ry < 0) ry = 0f
+        val width = rect.right - rect.left
+        val height = rect.bottom - rect.top
+        if (rx > width / 2) rx = width / 2
+        if (ry > height / 2) ry = height / 2
+        val widthMinusCorners = width - 2 * rx
+        val heightMinusCorners = height - 2 * ry
+        path.moveTo(rect.right, rect.top + ry)
+        if (tr) path.rQuadTo(0f, -ry, -rx, -ry) //top-right corner
+        else {
+            path.rLineTo(0f, -ry)
+            path.rLineTo(-rx, 0f)
+        }
+        path.rLineTo(-widthMinusCorners, 0f)
+        if (tl) path.rQuadTo(-rx, 0f, -rx, ry) //top-left corner
+        else {
+            path.rLineTo(-rx, 0f)
+            path.rLineTo(0f, ry)
+        }
+        path.rLineTo(0f, heightMinusCorners)
+        if (bl) path.rQuadTo(0f, ry, rx, ry) //bottom-left corner
+        else {
+            path.rLineTo(0f, ry)
+            path.rLineTo(rx, 0f)
+        }
+        path.rLineTo(widthMinusCorners, 0f)
+        if (br) path.rQuadTo(rx, 0f, rx, -ry) //bottom-right corner
+        else {
+            path.rLineTo(rx, 0f)
+            path.rLineTo(0f, -ry)
+        }
+        path.rLineTo(0f, -heightMinusCorners)
+        path.close() //Given close, last line to can be removed.
+        return path
     }
 }

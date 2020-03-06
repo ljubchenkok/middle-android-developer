@@ -12,7 +12,7 @@ import ru.skillbranch.skillarticles.extensions.data.toAppSettings
 import ru.skillbranch.skillarticles.extensions.data.toArticlePersonalInfo
 import ru.skillbranch.skillarticles.extensions.format
 import ru.skillbranch.skillarticles.extensions.indexesOf
-import ru.skillbranch.skillarticles.markdown.MarkdownParser
+import ru.skillbranch.skillarticles.data.repositories.MarkdownParser
 import ru.skillbranch.skillarticles.viewmodels.base.BaseViewModel
 import ru.skillbranch.skillarticles.viewmodels.base.Event
 import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
@@ -204,6 +204,7 @@ data class ArticleState(
         )
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun restore(savedState: Bundle): ArticleState {
         return copy(
             isSearch = savedState["isSearch"] as Boolean,

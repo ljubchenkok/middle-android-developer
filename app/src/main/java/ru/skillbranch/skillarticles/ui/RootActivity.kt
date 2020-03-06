@@ -5,7 +5,6 @@ import android.text.Selection
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.method.LinkMovementMethod
-import android.text.method.ScrollingMovementMethod
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
@@ -14,7 +13,6 @@ import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
-import androidx.core.text.clearSpans
 import androidx.core.text.getSpans
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_root.*
@@ -24,11 +22,11 @@ import kotlinx.android.synthetic.main.search_view_layout.*
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.extensions.dpToIntPx
 import ru.skillbranch.skillarticles.extensions.setMarginOptionally
-import ru.skillbranch.skillarticles.markdown.MarkdownBuilder
+import ru.skillbranch.skillarticles.ui.custom.markdown.MarkdownBuilder
 import ru.skillbranch.skillarticles.ui.base.BaseActivity
 import ru.skillbranch.skillarticles.ui.base.Binding
-import ru.skillbranch.skillarticles.ui.custom.SearchFocusSpan
-import ru.skillbranch.skillarticles.ui.custom.SearchSpan
+import ru.skillbranch.skillarticles.ui.custom.spans.SearchFocusSpan
+import ru.skillbranch.skillarticles.ui.custom.spans.SearchSpan
 import ru.skillbranch.skillarticles.ui.delegates.AttrValue
 import ru.skillbranch.skillarticles.ui.delegates.ObserveProp
 import ru.skillbranch.skillarticles.ui.delegates.RenderProp
@@ -42,14 +40,8 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
 
     override val layout: Int = R.layout.activity_root
     override val viewModel: ArticleViewModel by provideViewModel(null)
-
     @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
     public override val binding: ArticleBinding by lazy { ArticleBinding() }
-
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    val bgColor by AttrValue(R.attr.colorSecondary)
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    val fgColor by AttrValue(R.attr.colorOnSecondary)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -199,7 +191,7 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
         clearSearchResult()
         searchResult.forEach { (start, end) ->
                 content.setSpan(
-                    SearchSpan(bgColor, fgColor),
+                    SearchSpan(),
                     start,
                     end,
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -216,7 +208,7 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
             val result = spans[searchPosition]
             Selection.setSelection(content, content.getSpanStart(result))
             content.setSpan(
-                SearchFocusSpan(bgColor, fgColor),
+                SearchFocusSpan(),
                 content.getSpanStart(result),
                 content.getSpanEnd(result),
                 SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE

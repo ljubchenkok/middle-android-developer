@@ -7,8 +7,6 @@ import android.net.NetworkCapabilities
 import android.os.Build
 import android.util.TypedValue
 import androidx.annotation.AttrRes
-import ru.skillbranch.skillarticles.R
-import ru.skillbranch.skillarticles.ui.delegates.AttrValue
 
 fun Context.dpToPx(dp: Int): Float {
     return TypedValue.applyDimension(
@@ -27,20 +25,34 @@ fun Context.dpToIntPx(dp: Int): Int {
     ).toInt()
 }
 
+@Suppress("DEPRECATION")
 val Context.isNetworkAvailable: Boolean
-    get() {
-        val cm = this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            cm.activeNetwork?.run {
-                val nc = cm.getNetworkCapabilities(this)
-                nc!!.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) || nc.hasTransport(
-                    NetworkCapabilities.TRANSPORT_WIFI
-                )
-            } ?: false
-        } else {
-            cm.activeNetworkInfo?.run { isConnectedOrConnecting } ?: false
+get(){
+    var result = false
+    val cm = this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        cm?.run {
+            cm.getNetworkCapabilities(cm.activeNetwork)?.run {
+                result = when {
+                    hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                    hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+                    else -> false
+                }
+            }
+        }
+    } else {
+        cm?.run {
+            cm.activeNetworkInfo?.run {
+                if (type == ConnectivityManager.TYPE_WIFI) {
+                    result = true
+                } else if (type == ConnectivityManager.TYPE_MOBILE) {
+                    result = true
+                }
+            }
         }
     }
+    return result
+}
 
 fun Context.attrValue( @AttrRes res: Int ): Int {
     val tv = TypedValue()

@@ -13,11 +13,12 @@ import androidx.core.text.getSpans
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.extensions.*
 import ru.skillbranch.skillarticles.ui.custom.spans.HeaderSpan
+import ru.skillbranch.skillarticles.ui.custom.spans.SearchFocusSpan
 import ru.skillbranch.skillarticles.ui.custom.spans.SearchSpan
 
 class SearchBgHelper(
     context: Context,
-    private val focusListener: (Int) -> Unit
+    private val focusListener: (Int, Int) -> Unit
 ) {
 
     private val padding = context.dpToIntPx(4)
@@ -86,12 +87,20 @@ class SearchBgHelper(
             spanEnd = text.getSpanEnd(it)
             startLine = layout.getLineForOffset(spanStart)
             endLine = layout.getLineForOffset(spanEnd)
+
+            if (it is SearchFocusSpan) {
+                focusListener.invoke(layout.getLineTop(startLine), layout.getLineBottom(startLine))
+            }
             headerSpans = text.getSpans(spanStart, spanEnd, HeaderSpan::class.java)
+
             if (headerSpans.isNotEmpty()) {
                 topExtraPadding =
                     if (spanStart in headerSpans[0].firstLineBounds || spanEnd in headerSpans[0].firstLineBounds) headerSpans[0].topExtraPadding else 0
                 bottomExtraPadding =
                     if (spanStart in headerSpans[0].lastLineBounds || spanEnd in headerSpans[0].lastLineBounds) headerSpans[0].bottomExtraPadding else 0
+            } else {
+                topExtraPadding = 0
+                bottomExtraPadding = 0
             }
 
             startOffset = layout.getPrimaryHorizontal(spanStart).toInt()

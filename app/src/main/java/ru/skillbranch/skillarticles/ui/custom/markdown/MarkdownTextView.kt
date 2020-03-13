@@ -19,7 +19,8 @@ import ru.skillbranch.skillarticles.extensions.dpToIntPx
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
 class MarkdownTextView constructor(
     context: Context,
-    fontSize: Float
+    fontSize: Float,
+    mockHelper: SearchBgHelper? = null
 ) : TextView(context, null, 0), IMarkdownView {
     override var fontSize: Float = fontSize
         set(value) {
@@ -32,7 +33,7 @@ class MarkdownTextView constructor(
     private val color = context.attrValue(R.attr.colorOnBackground)
     private val focusRect = Rect()
 
-    private val searchBgHelper = SearchBgHelper(context) {top, bottom ->
+    private val searchBgHelper = mockHelper ?: SearchBgHelper(context) {top, bottom ->
         focusRect.set(0, top - context.dpToIntPx(56), width, bottom - context.dpToIntPx(56))
         requestRectangleOnScreen(focusRect, false)
     }

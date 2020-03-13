@@ -13,6 +13,7 @@ import android.widget.HorizontalScrollView
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.ColorInt
+import androidx.annotation.VisibleForTesting
 import androidx.core.view.setPadding
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.extensions.attrValue
@@ -40,10 +41,13 @@ class MarkdownCodeView private constructor(
     private lateinit var codeString: CharSequence
 
     //views
-    private val iv_copy: ImageView
-    private val iv_switch: ImageView
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    val iv_copy: ImageView
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    val iv_switch: ImageView
     private val tv_codeView: MarkdownTextView
-    private val sv_scroll: HorizontalScrollView
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    val sv_scroll: HorizontalScrollView
 
     //colors
     @ColorInt
@@ -138,14 +142,16 @@ class MarkdownCodeView private constructor(
         }
     }
 
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
+    public override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val width = View.getDefaultSize(suggestedMinimumWidth, widthMeasureSpec)
         measureChild(sv_scroll, widthMeasureSpec, heightMeasureSpec)
         val usedHeight = sv_scroll.measuredHeight + paddingTop + paddingBottom
         setMeasuredDimension(width, usedHeight)
     }
 
-    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
+    public override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         val usedHeight = paddingTop
         val bodyWidth = r - l - paddingLeft - paddingRight
         val left = paddingLeft

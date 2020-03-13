@@ -9,10 +9,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
+import androidx.annotation.VisibleForTesting
 import androidx.core.animation.doOnEnd
 import androidx.core.graphics.ColorUtils
 import androidx.core.view.isVisible
-import androidx.core.view.marginTop
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation
@@ -27,6 +27,7 @@ import ru.skillbranch.skillarticles.extensions.setPaddingOptionally
 
 
 @SuppressLint("ViewConstructor")
+@VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
 class MarkdownImageView private constructor(
     context: Context,
     fontSize: Float
@@ -45,9 +46,12 @@ class MarkdownImageView private constructor(
     private lateinit var imageUrl: String
     private lateinit var imageTitle: CharSequence
 
-    private val iv_image: ImageView
-    private val tv_title: MarkdownTextView
-    private var tv_alt: TextView? = null
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    val iv_image: ImageView
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    val tv_title: MarkdownTextView
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    var tv_alt: TextView? = null
 
     @Px
     private val titleTopMargin: Int = context.dpToIntPx(8)//8dp
@@ -143,8 +147,8 @@ class MarkdownImageView private constructor(
 
     }
 
-
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
+    public override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val width = View.getDefaultSize(suggestedMinimumWidth, widthMeasureSpec)
         val ms = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY)
         iv_image.measure(ms,heightMeasureSpec)
@@ -156,7 +160,8 @@ class MarkdownImageView private constructor(
         setMeasuredDimension(width, usedHeight)
     }
 
-    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
+    public override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         var usedHeight = 0
         val bodyWidth = r - l - paddingLeft - paddingRight
         val left = paddingLeft
@@ -167,7 +172,8 @@ class MarkdownImageView private constructor(
         tv_alt?.layout(left,iv_image.measuredHeight - (tv_alt?.measuredHeight ?: 0), right, iv_image.measuredHeight)
     }
 
-    override fun dispatchDraw(canvas: Canvas) {
+    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
+    public override fun dispatchDraw(canvas: Canvas) {
         super.dispatchDraw(canvas)
         canvas.drawLine(
             0f,

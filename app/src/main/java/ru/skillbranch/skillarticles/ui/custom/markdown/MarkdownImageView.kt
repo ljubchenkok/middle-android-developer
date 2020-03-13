@@ -149,14 +149,16 @@ class MarkdownImageView private constructor(
 
     @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
     public override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        var usedHeight = 0
         val width = View.getDefaultSize(suggestedMinimumWidth, widthMeasureSpec)
         val ms = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY)
         iv_image.measure(ms,heightMeasureSpec)
         tv_title.measure(ms,heightMeasureSpec)
         tv_alt?.measure(ms, heightMeasureSpec )
         if(tv_alt!=null) measureChild(tv_alt,widthMeasureSpec, heightMeasureSpec)
-        val usedHeight = iv_image.measuredHeight + tv_title.measuredHeight + titleTopMargin
+        usedHeight += iv_image.measuredHeight + titleTopMargin
         linePositionY = usedHeight + tv_title.measuredHeight / 2f
+        usedHeight +=tv_title.measuredHeight
         setMeasuredDimension(width, usedHeight)
     }
 

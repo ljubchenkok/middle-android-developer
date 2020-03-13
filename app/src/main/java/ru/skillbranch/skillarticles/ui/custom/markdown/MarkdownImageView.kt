@@ -220,8 +220,8 @@ class MarkdownImageView private constructor(
         va.start()
     }
 
-    public override fun onSaveInstanceState(): Parcelable? {
-        val savedState = SavedState(super.onSaveInstanceState())
+    public override fun onSaveInstanceState(): Parcelable {
+        val savedState = SavedState(super.onSaveInstanceState()!!)
         savedState.isAltVisible = tv_alt?.isVisible ?: false
         return savedState
     }

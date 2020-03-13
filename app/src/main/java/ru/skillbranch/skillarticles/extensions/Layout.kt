@@ -11,10 +11,13 @@ fun Layout.getLineBottomWithoutPadding(line: Int): Int{
     else getLineBottomWithoutSpacingline(line)
 }
 
+
+
 fun Layout.getLineTopWithoutPadding(line: Int): Int {
     return if(line == 0) getLineTop(line) - topPadding
     else getLineTop(line)
 }
+
 
 fun Layout.getLineBottomWithoutSpacingline(line: Int): Int {
     val lineBottom = getLineBottom(line)

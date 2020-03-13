@@ -16,18 +16,15 @@ interface IMarkdownView {
     ) {
         clearSearchResult()
         val offsetResult = results.map { (start, end) -> start.minus(offset) to end.minus(offset) }
-        try {
-            offsetResult.forEach { (start, end) ->
-                spannableContent.setSpan(
-                    SearchSpan(),
-                    start,
-                    end,
-                    SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
-
-            }
-        } catch (e: Exception) {
+        offsetResult.forEach { (start, end) ->
+            spannableContent.setSpan(
+                SearchSpan(),
+                start,
+                end,
+                SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
         }
+
     }
 
     fun renderSearchPosition(

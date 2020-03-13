@@ -3,6 +3,8 @@ package ru.skillbranch.skillarticles.ui.custom.markdown
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
+import android.os.Parcel
+import android.os.Parcelable
 import android.text.Spannable
 import android.view.*
 import android.widget.ImageView
@@ -216,6 +218,50 @@ class MarkdownImageView private constructor(
         )
         va.doOnEnd { tv_alt?.isVisible = false }
         va.start()
+    }
+
+    public override fun onSaveInstanceState(): Parcelable? {
+        val savedState = SavedState(super.onSaveInstanceState())
+        savedState.isAltVisible = tv_alt?.isVisible ?: false
+        return savedState
+    }
+
+    public override fun onRestoreInstanceState(state: Parcelable) {
+        if (state is SavedState) {
+            super.onRestoreInstanceState(state.superState)
+            if(state.isAltVisible) tv_alt?.isVisible = true
+        } else {
+            super.onRestoreInstanceState(state)
+        }
+    }
+
+
+    internal class SavedState : BaseSavedState {
+
+        var isAltVisible: Boolean = false
+
+        constructor(source: Parcel) : super(source) {
+            isAltVisible = source.readByte().toInt() != 0
+        }
+
+        constructor(superState: Parcelable) : super(superState)
+
+        override fun writeToParcel(out: Parcel, flags: Int) {
+            super.writeToParcel(out, flags)
+            out.writeByte((if (isAltVisible) 1 else 0).toByte())
+        }
+
+        @JvmField
+        val CREATOR: Parcelable.Creator<SavedState> = object : Parcelable.Creator<SavedState> {
+
+            override fun createFromParcel(source: Parcel): SavedState {
+                return SavedState(source)
+            }
+
+            override fun newArray(size: Int): Array<SavedState?> {
+                return arrayOfNulls(size)
+            }
+        }
     }
 }
 

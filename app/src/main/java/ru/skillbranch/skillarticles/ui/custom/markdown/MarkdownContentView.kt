@@ -1,6 +1,7 @@
 package ru.skillbranch.skillarticles.ui.custom.markdown
 
 import android.content.Context
+import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
@@ -76,8 +77,8 @@ class MarkdownContentView @JvmOverloads constructor(
 
     fun setContent(content: List<MarkdownElement>) {
         elements = content
-        content.forEach {
-            when (it) {
+        content.forEachIndexed { index, child ->
+            when (child) {
                 is MarkdownElement.Text -> {
                     val tv = MarkdownTextView(context, textSize).apply {
                         setPaddingOptionally(
@@ -87,7 +88,7 @@ class MarkdownContentView @JvmOverloads constructor(
                         setLineSpacing(fontSize * 0.5f, 1f)
                     }
                     MarkdownBuilder(context)
-                        .markdownToSpan(it)
+                        .markdownToSpan(child)
                         .run {
                             tv.setText(this, TextView.BufferType.SPANNABLE)
                         }
@@ -97,18 +98,22 @@ class MarkdownContentView @JvmOverloads constructor(
                     val iv = MarkdownImageView(
                         context,
                         textSize,
-                        it.image.url,
-                        it.image.text,
-                        it.image.alt
-                    )
+                        child.image.url,
+                        child.image.text,
+                        child.image.alt
+                    ).apply {
+                        id = index
+                    }
                     addView(iv)
                 }
                 is MarkdownElement.Scroll -> {
                     val sv = MarkdownCodeView(
                         context,
                         textSize,
-                        it.blockCode.text
-                    )
+                        child.blockCode.text
+                    ).apply {
+                        id = index
+                    }
                     addView(sv)
                 }
 
@@ -155,4 +160,5 @@ class MarkdownContentView @JvmOverloads constructor(
             it.copyListener = listener
         }
     }
+
 }

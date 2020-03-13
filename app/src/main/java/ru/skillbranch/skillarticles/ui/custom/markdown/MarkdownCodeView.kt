@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
+import android.os.Parcel
+import android.os.Parcelable
 import android.text.Selection
 import android.text.Spannable
 import android.view.View
@@ -194,8 +196,8 @@ class MarkdownCodeView private constructor(
 
     override fun renderSearchPosition(searchPosition: Pair<Int, Int>, offset: Int) {
 
-        if((parent as ViewGroup).hasFocus() && !tv_codeView.hasFocus()) tv_codeView.requestFocus()
-        Selection.setSelection(spannableContent,searchPosition.first.minus(offset))
+        if ((parent as ViewGroup).hasFocus() && !tv_codeView.hasFocus()) tv_codeView.requestFocus()
+        Selection.setSelection(spannableContent, searchPosition.first.minus(offset))
     }
 
     private fun toggleColors() {
@@ -209,5 +211,49 @@ class MarkdownCodeView private constructor(
         iv_copy.imageTintList = ColorStateList.valueOf(textColor)
         (background as GradientDrawable).color = ColorStateList.valueOf(bgColor)
         tv_codeView.setTextColor(textColor)
+    }
+
+    public override fun onSaveInstanceState(): Parcelable? {
+        val savedState = SavedState(super.onSaveInstanceState())
+        savedState.isManual = isManual
+        return savedState
+    }
+
+    public override fun onRestoreInstanceState(state: Parcelable) {
+        if (state is SavedState) {
+            super.onRestoreInstanceState(state.superState)
+            if(state.isManual) toggleColors()
+        } else {
+            super.onRestoreInstanceState(state)
+        }
+    }
+
+
+    internal class SavedState : BaseSavedState {
+
+        var isManual: Boolean = false
+
+        constructor(source: Parcel) : super(source) {
+            isManual = source.readByte().toInt() != 0
+        }
+
+        constructor(superState: Parcelable) : super(superState)
+
+        override fun writeToParcel(out: Parcel, flags: Int) {
+            super.writeToParcel(out, flags)
+            out.writeByte((if (isManual) 1 else 0).toByte())
+        }
+
+        @JvmField
+        val CREATOR: Parcelable.Creator<SavedState> = object : Parcelable.Creator<SavedState> {
+
+            override fun createFromParcel(source: Parcel): SavedState {
+                return SavedState(source)
+            }
+
+            override fun newArray(size: Int): Array<SavedState?> {
+                return arrayOfNulls(size)
+            }
+        }
     }
 }

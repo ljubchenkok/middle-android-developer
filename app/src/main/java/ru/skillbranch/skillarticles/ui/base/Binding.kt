@@ -8,18 +8,27 @@ import kotlin.reflect.KProperty
 
 abstract class Binding {
     val delegates = mutableMapOf<String, RenderProp<out Any>>()
+    var isInflated = false
+    open val afterInflated: (() -> Unit)? = null
+    fun onFinishInflate() {
+        if (isInflated) {
+            afterInflated?.invoke()
+            isInflated = true
+        }
+    }
 
-    abstract fun onFinishInflate()
     abstract fun bind(data: IViewModelState)
-    abstract fun saveUi(outState: Bundle)
-    abstract fun restoreUi(savedState: Bundle)
+    open fun saveUi(outState: Bundle) {}
+    open fun restoreUi(savedState: Bundle?) {
+
+    }
 
     @Suppress("UNCHECKED_CAST")
     fun <A, B, C, D> dependsOn(
         vararg fields: KProperty<*>,
         onChange: (A, B, C, D) -> Unit
     ) {
-        check(fields.size == 4) {"Names size must be 4, current ${fields.size}"}
+        check(fields.size == 4) { "Names size must be 4, current ${fields.size}" }
         val names = fields.map { it.name }
 
         names.forEach {
@@ -32,5 +41,9 @@ abstract class Binding {
                 )
             }
         }
+    }
+
+    fun rebind() {
+        delegates.forEach { it.value.bind() }
     }
 }

@@ -13,10 +13,7 @@ import ru.skillbranch.skillarticles.extensions.data.toArticlePersonalInfo
 import ru.skillbranch.skillarticles.extensions.format
 import ru.skillbranch.skillarticles.extensions.indexesOf
 import ru.skillbranch.skillarticles.data.repositories.clearContent
-import ru.skillbranch.skillarticles.viewmodels.base.BaseViewModel
-import ru.skillbranch.skillarticles.viewmodels.base.Event
-import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
-import ru.skillbranch.skillarticles.viewmodels.base.Notify
+import ru.skillbranch.skillarticles.viewmodels.base.*
 
 class ArticleViewModel(
     handle: SavedStateHandle,
@@ -69,7 +66,10 @@ class ArticleViewModel(
                 isDarkMode = settings.isDarkMode,
                 isBigText = settings.isBigText
             )
+        }
 
+        subscribeOnDataSource(repository.isAuth()) { isAuth, state ->
+            state.copy(isAuth = isAuth)
         }
     }
 
@@ -132,7 +132,7 @@ class ArticleViewModel(
 
 
       override fun handleSendComment() {
-        TODO("Not yet implemented")
+        if(!currentState.isAuth) navigate(NavigationCommand.StartLogin())
     }
 
     override fun handleBookmark() {

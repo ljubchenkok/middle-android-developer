@@ -110,6 +110,11 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
         }
     }
 
+    override fun onPause() {
+        activity?.hideKeyBoard(et_comment)
+        super.onPause()
+    }
+
     override fun onDestroyView() {
         root.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
         super.onDestroyView()

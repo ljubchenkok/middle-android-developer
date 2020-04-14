@@ -2,25 +2,38 @@ package ru.skillbranch.skillarticles.ui.base
 
 import android.os.Bundle
 import ru.skillbranch.skillarticles.ui.delegates.RenderProp
-//import ru.skillbranch.skillarticles.ui.delegates.RenderProp
 import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
 import kotlin.reflect.KProperty
 
 abstract class Binding {
     val delegates = mutableMapOf<String, RenderProp<out Any>>()
     var isInflated = false
+
     open val afterInflated: (() -> Unit)? = null
     fun onFinishInflate() {
-        if (isInflated) {
+        if (!isInflated) {
             afterInflated?.invoke()
             isInflated = true
         }
     }
 
-    abstract fun bind(data: IViewModelState)
-    open fun saveUi(outState: Bundle) {}
-    open fun restoreUi(savedState: Bundle?) {
+    fun rebind() {
+        delegates.forEach { it.value.bind() }
+    }
 
+    abstract fun bind(data: IViewModelState)
+    /**
+     * override this if need save binding in bundle
+     */
+    open fun saveUi(outState: Bundle) {
+        //empty default implementation
+    }
+
+    /**
+     * override this if need restore binding from bundle
+     */
+    open fun restoreUi(savedState: Bundle?) {
+        //empty default implementation
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -43,7 +56,5 @@ abstract class Binding {
         }
     }
 
-    fun rebind() {
-        delegates.forEach { it.value.bind() }
-    }
+
 }

@@ -10,7 +10,7 @@ import androidx.core.view.marginRight
 import ru.skillbranch.skillarticles.ui.custom.ArticleSubmenu
 import ru.skillbranch.skillarticles.ui.custom.Bottombar
 
-class SubmenuBehavior<V : View>(context: Context, attrs: AttributeSet) :
+class SubmenuBehavior<V : View>(context: Context, attrs: AttributeSet?) :
     CoordinatorLayout.Behavior<V>(context, attrs) {
 
     override fun onStartNestedScroll(

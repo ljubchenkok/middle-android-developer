@@ -130,6 +130,11 @@ class ArticleViewModel(
         }
     }
 
+
+      override fun handleSendComment() {
+        TODO("Not yet implemented")
+    }
+
     override fun handleBookmark() {
         val toggleBookmark = {
             val info = currentState.toArticlePersonalInfo()
@@ -164,16 +169,15 @@ class ArticleViewModel(
         notify(message)
     }
 
-    fun handleUpResult() {
+    override fun handleUpResult() {
         updateState { it.copy(searchPosition = it.searchPosition.dec()) }
-
     }
 
-    fun handleDownResult() {
+    override fun handleDownResult() {
         updateState { it.copy(searchPosition = it.searchPosition.inc()) }
     }
 
-    fun handleCopyCode() {
+    override fun handleCopyCode() {
         notify(Notify.TextMessage("Code copy to clipboard"))
     }
 

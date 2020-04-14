@@ -1,6 +1,5 @@
 package ru.skillbranch.skillarticles.ui.delegates
 
-import ru.skillbranch.skillarticles.data.delegates.PrefDelegate
 import ru.skillbranch.skillarticles.ui.base.Binding
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -10,8 +9,9 @@ class RenderProp<T: Any> (
     private  val needInit: Boolean = true,
     private val onChange: ((T) -> Unit)? = null
     ) : ReadWriteProperty<Binding, T> {
-
     private val listeners: MutableList<()->Unit> = mutableListOf()
+
+
     fun bind() {
         if(needInit) onChange?.invoke(value)
     }
@@ -19,7 +19,7 @@ class RenderProp<T: Any> (
         thisRef: Binding,
         prop: KProperty<*>
     ) : ReadWriteProperty<Binding, T> {
-        val delegate = RenderProp(value, true, onChange)
+        val delegate = RenderProp(value, needInit, onChange)
         registerDelegate(thisRef,prop.name, delegate)
         return delegate
     }

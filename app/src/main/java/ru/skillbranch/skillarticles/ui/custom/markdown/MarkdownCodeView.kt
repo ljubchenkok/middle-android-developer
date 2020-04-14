@@ -215,45 +215,49 @@ class MarkdownCodeView private constructor(
 
     public override fun onSaveInstanceState(): Parcelable {
         val savedState = SavedState(super.onSaveInstanceState()!!)
-        savedState.isManual = isManual
+        savedState.ssIsManual = isManual
+        savedState.ssIsDark = isDark
         return savedState
     }
 
     public override fun onRestoreInstanceState(state: Parcelable) {
+        super.onRestoreInstanceState(state)
         if (state is SavedState) {
-            super.onRestoreInstanceState(state.superState)
-            if(state.isManual) toggleColors()
-        } else {
-            super.onRestoreInstanceState(state)
+            isManual = state.ssIsManual
+            isDark = state.ssIsDark
+            applyColors()
         }
     }
 
 
     internal class SavedState : BaseSavedState {
 
-        var isManual: Boolean = false
-
-        constructor(source: Parcel) : super(source) {
-            isManual = source.readByte().toInt() != 0
-        }
+        var ssIsManual: Boolean = false
+        var ssIsDark: Boolean = false
 
         constructor(superState: Parcelable) : super(superState)
 
+        constructor(source: Parcel) : super(source) {
+            ssIsManual = source.readInt() == 1
+            ssIsDark = source.readInt() == 1
+        }
+
         override fun writeToParcel(out: Parcel, flags: Int) {
             super.writeToParcel(out, flags)
-            out.writeByte((if (isManual) 1 else 0).toByte())
+            out.writeInt((if (ssIsManual) 1 else 0))
+            out.writeInt((if (ssIsDark) 1 else 0))
         }
+
+        override fun describeContents(): Int  = 0
 
         @JvmField
         val CREATOR: Parcelable.Creator<SavedState> = object : Parcelable.Creator<SavedState> {
 
-            override fun createFromParcel(source: Parcel): SavedState {
-                return SavedState(source)
-            }
+            override fun createFromParcel(source: Parcel): SavedState = SavedState(source)
 
-            override fun newArray(size: Int): Array<SavedState?> {
-                return arrayOfNulls(size)
-            }
+
+            override fun newArray(size: Int): Array<SavedState?> = arrayOfNulls(size)
+
         }
     }
 }

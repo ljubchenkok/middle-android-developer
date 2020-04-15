@@ -39,7 +39,7 @@ class RootActivity : BaseActivity<RootViewModel>() {
             true
         }
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
-            if (isAuth && destination.id == R.id.nav_auth) navController.popBackStack()
+            if (isAuth && destination.id == R.id.nav_auth) viewModel.navigate(NavigationCommand.To(R.id.nav_profile))
             else nav_view.selectDestination(destination)
         }
 

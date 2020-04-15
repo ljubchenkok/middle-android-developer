@@ -31,6 +31,7 @@ abstract class BaseActivity<T : BaseViewModel<out IViewModelState>> : AppCompatA
     protected abstract val viewModel: T
     protected abstract val layout: Int
     lateinit var navController: NavController
+    var isAuth = false
 
     val toolbarBuilder = ToolbarBuilder()
     val bottombarBuilder = BottombarBuilder()
@@ -77,6 +78,7 @@ abstract class BaseActivity<T : BaseViewModel<out IViewModelState>> : AppCompatA
             }
 
             is NavigationCommand.FinishLogin -> {
+                isAuth = true
                 navController.navigate(R.id.finish_login)
                 if(command.privateDestination!=null) navController.navigate(command.privateDestination)
             }

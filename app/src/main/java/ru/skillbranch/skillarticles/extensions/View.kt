@@ -2,8 +2,9 @@ package ru.skillbranch.skillarticles.extensions
 
 import android.view.View
 import android.widget.FrameLayout
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.widget.NestedScrollView
+import androidx.navigation.NavDestination
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 fun NestedScrollView.setMarginOptionally(
     left: Int = -1,
@@ -26,3 +27,10 @@ fun View.setPaddingOptionally(
 ) {
     setPadding(left, top, right, bottom)
 }
+
+
+fun BottomNavigationView.selectDestination(destination: NavDestination) {
+    val menuItem = menu.findItem(destination.id)
+    menuItem?.isChecked = true
+}
+

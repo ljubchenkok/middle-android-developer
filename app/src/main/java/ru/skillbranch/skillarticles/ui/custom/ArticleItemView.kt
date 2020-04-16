@@ -120,7 +120,6 @@ class ArticleItemView @JvmOverloads constructor(
         addView(commentsCount)
 
         readDuration = TextView(context).apply {
-            //setMarginOptionally(left = marginUnit * 2, top = marginUnit, right = marginUnit * 2)
             setTextColor(context.getColor(R.color.color_gray))
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
             id = ViewCompat.generateViewId()

@@ -15,10 +15,15 @@ import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.data.ArticleItemData
 import ru.skillbranch.skillarticles.extensions.dpToIntPx
 import ru.skillbranch.skillarticles.extensions.format
+import ru.skillbranch.skillarticles.ui.custom.ArticleItemView
 
 class ArticlesAdapter (private val listener: (ArticleItemData) -> Unit) : ListAdapter<ArticleItemData, ArticleVH>(ArticleDiffCallback()){
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticleVH {
-        val containerView = LayoutInflater.from(parent.context).inflate(R.layout.item_article, parent, false)
+//        val containerView = LayoutInflater.from(parent.context).inflate(R.layout.item_article, parent, false)
+        val padding = parent.context.dpToIntPx(16)
+        val containerView = ArticleItemView(parent.context).apply {
+            setPadding(padding,padding,padding,padding)
+        }
         return ArticleVH(containerView)
     }
 
@@ -39,29 +44,30 @@ class ArticleVH(override val containerView: View) : RecyclerView.ViewHolder(cont
         item: ArticleItemData,
         listener: (ArticleItemData) -> Unit
     ){
-        val posterSize: Int = containerView.context.dpToIntPx(64)
-        val categorySize: Int = containerView.context.dpToIntPx(40)
-        val cornerRadius: Int = containerView.context.dpToIntPx(8)
-
-        Glide.with(containerView.context)
-            .load(item.poster)
-            .transform(CenterCrop(), RoundedCorners(cornerRadius))
-            .override(posterSize)
-            .into(containerView.iv_poster)
-
-        Glide.with(containerView.context)
-            .load(item.categoryIcon)
-            .transform(CenterCrop(), RoundedCorners(cornerRadius))
-            .override(categorySize)
-            .into(containerView.iv_category)
-
-        containerView.tv_date.text = item.date.format()
-        containerView.tv_author.text = item.author
-        containerView.tv_title.text = item.title
-        containerView.tv_description.text = item.description
-        containerView.tv_likes_count.text = item.likeCount.toString()
-        containerView.tv_comments_count.text = item.commentCount.toString()
-        containerView.tv_read_duration.text = "${item.readDuration} min read"
+        (containerView as ArticleItemView).bind(item)
+//        val posterSize: Int = containerView.context.dpToIntPx(64)
+//        val categorySize: Int = containerView.context.dpToIntPx(40)
+//        val cornerRadius: Int = containerView.context.dpToIntPx(8)
+//
+//        Glide.with(containerView.context)
+//            .load(item.poster)
+//            .transform(CenterCrop(), RoundedCorners(cornerRadius))
+//            .override(posterSize)
+//            .into(containerView.iv_poster)
+//
+//        Glide.with(containerView.context)
+//            .load(item.categoryIcon)
+//            .transform(CenterCrop(), RoundedCorners(cornerRadius))
+//            .override(categorySize)
+//            .into(containerView.iv_category)
+//
+//        containerView.tv_date.text = item.date.format()
+//        containerView.tv_author.text = item.author
+//        containerView.tv_title.text = item.title
+//        containerView.tv_description.text = item.description
+//        containerView.tv_likes_count.text = item.likeCount.toString()
+//        containerView.tv_comments_count.text = item.commentCount.toString()
+//        containerView.tv_read_duration.text = "${item.readDuration} min read"
 
         itemView.setOnClickListener{listener(item)}
 

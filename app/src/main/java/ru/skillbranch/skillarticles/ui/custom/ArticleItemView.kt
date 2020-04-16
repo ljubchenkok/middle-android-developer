@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.view.ViewCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -48,6 +47,7 @@ class ArticleItemView @JvmOverloads constructor(
     private val spacingSmall = context.dpToIntPx(4)
 
     init {
+        setPadding(spacingLarge,spacingLarge,spacingLarge,spacingLarge)
         layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
         date = TextView(context).apply {
             setTextColor(context.getColor(R.color.color_gray))
@@ -165,7 +165,6 @@ class ArticleItemView @JvmOverloads constructor(
             readDuration.measuredHeight,
             iconSize
         ).max() ?: 0
-
         usedHeight += paddingBottom
         setMeasuredDimension(width, usedHeight)
     }
@@ -206,36 +205,46 @@ class ArticleItemView @JvmOverloads constructor(
         title.layout(left, titleTop, titleRight, titleBottom)
 
         var descriptionBottom = barrierBottom + description.measuredHeight
-        description.layout(left, barrierBottom, right, descriptionBottom )
-        descriptionBottom +=spacingNormal
+        description.layout(left, barrierBottom, right, descriptionBottom)
+        descriptionBottom += spacingNormal
 
         val likesRight = left + iconSize
         val likesBottom = descriptionBottom + iconSize
-        likes.layout( left, descriptionBottom, likesRight, likesBottom )
+        likes.layout(left, descriptionBottom, likesRight, likesBottom)
 
         val likesCountLeft = left + iconSize + spacingNormal
         val likesCountRight = likesCountLeft + likesCount.measuredWidth
         val likesCountBottom = descriptionBottom + likesCount.measuredHeight
-        likesCount.layout(likesCountLeft, descriptionBottom,likesCountRight, likesCountBottom )
+        likesCount.layout(likesCountLeft, descriptionBottom, likesCountRight, likesCountBottom)
 
         val commentsLeft = likesCountLeft + likesCount.measuredWidth + spacingLarge
         val commentRight = commentsLeft + iconSize
         val commentsBottom = descriptionBottom + iconSize
-        comments.layout( commentsLeft,  descriptionBottom, commentRight , commentsBottom )
+        comments.layout(commentsLeft, descriptionBottom, commentRight, commentsBottom)
 
-        val commentCountLeft = commentsLeft + iconSize + spacingNormal
-        val commentsCountRight = commentCountLeft + commentsCount.measuredWidth
+        val commentsCountLeft = commentsLeft + iconSize + spacingNormal
+        val commentsCountRight = commentsCountLeft + commentsCount.measuredWidth
         val commentsCountBottom = descriptionBottom + commentsCount.measuredHeight
-        commentsCount.layout( commentCountLeft, descriptionBottom, commentsCountRight, commentsCountBottom )
+        commentsCount.layout(
+            commentsCountLeft,
+            descriptionBottom,
+            commentsCountRight,
+            commentsCountBottom
+        )
 
         val bookmarkLeft = right - iconSize
         val bookmarkBottom = descriptionBottom + iconSize
-        isBookmark.layout(bookmarkLeft, descriptionBottom, right,  bookmarkBottom )
+        isBookmark.layout(bookmarkLeft, descriptionBottom, right, bookmarkBottom)
 
-        val readDurationLeft = commentCountLeft + commentsCount.measuredWidth + spacingLarge
+        val readDurationLeft = commentsCountLeft + commentsCount.measuredWidth + spacingLarge
         val readDurationRight = right - iconSize - spacingLarge
         val readDurationBottom = descriptionBottom + readDuration.measuredHeight
-        readDuration.layout( readDurationLeft, descriptionBottom, readDurationRight, readDurationBottom)
+        readDuration.layout(
+            readDurationLeft,
+            descriptionBottom,
+            readDurationRight,
+            readDurationBottom
+        )
 
     }
 
@@ -260,7 +269,6 @@ class ArticleItemView @JvmOverloads constructor(
             .override(categorySize)
             .into(category)
     }
-
 
 
 }

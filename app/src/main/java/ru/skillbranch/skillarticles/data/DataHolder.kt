@@ -17,7 +17,7 @@ object LocalDataHolder {
 
     fun findArticle(articleId: String): LiveData<ArticleData?> {
         GlobalScope.launch {
-            delay(1000)
+            delay(100)
             articleData.postValue(
                 ArticleData(
                     title = "Drawing a rounded corner background on text",
@@ -154,7 +154,7 @@ data class ArticleItemData(
     val date: Date = Date(),
     val author: String = "Florina Muntenescu",
     val authorAvatar: String = "https://miro.medium.com/fit/c/96/96/1*z2H2HkOuv5bAOuIvUUN-5w.jpeg",
-    val title: String = "Drawing a rounded corner background on text",
+    val title: String = "Drawing a rounded corner background on text Drawing a rounded corner background on text Drawing a rounded corner background on text Drawing a rounded corner background on text Drawing a rounded corner background on text ",
     val description: String = "Let’s say that we need to draw a rounded corner background on text, supporting the following cases",
     val poster: String = "https://miro.medium.com/max/4209/1*GHjquSrfS6bNSjr_rsDSJw.png",
     val category: String = "Android",

@@ -52,23 +52,23 @@ class ArticleItemView @JvmOverloads constructor(
         date = TextView(context).apply {
             setTextColor(context.getColor(R.color.color_gray))
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
-            id = ViewCompat.generateViewId()
+            id = R.id.tv_title
 
         }
         addView(date)
         author = TextView(context).apply {
             setTextColor(context.attrValue(R.attr.colorPrimary))
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
-            id = ViewCompat.generateViewId()
+            id = R.id.tv_author
         }
         addView(author)
         poster = ImageView(context).apply {
-            id = ViewCompat.generateViewId()
+            id = R.id.iv_poster
         }
         addView(poster)
 
         category = ImageView(context).apply {
-            id = ViewCompat.generateViewId()
+            id = R.id.iv_category
         }
         addView(category)
 
@@ -76,14 +76,14 @@ class ArticleItemView @JvmOverloads constructor(
             setTextColor(context.attrValue(R.attr.colorPrimary))
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
             setTypeface(typeface, Typeface.BOLD)
-            id = ViewCompat.generateViewId()
+            id = R.id.tv_title
         }
         addView(title)
 
         description = TextView(context).apply {
             setTextColor(context.attrValue(R.attr.colorOnBackground))
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
-            id = ViewCompat.generateViewId()
+            id = R.id.tv_description
         }
         addView(description)
 
@@ -92,14 +92,14 @@ class ArticleItemView @JvmOverloads constructor(
             setColorFilter(
                 context.getColor(R.color.color_gray)
             )
-            id = ViewCompat.generateViewId()
+            id = R.id.iv_likes
         }
         addView(likes)
 
         likesCount = TextView(context).apply {
             setTextColor(context.getColor(R.color.color_gray))
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
-            id = ViewCompat.generateViewId()
+            id = R.id.tv_likes_count
         }
         addView(likesCount)
 
@@ -108,21 +108,21 @@ class ArticleItemView @JvmOverloads constructor(
             setColorFilter(
                 context.getColor(R.color.color_gray)
             )
-            id = ViewCompat.generateViewId()
+            id = R.id.iv_comments
         }
         addView(comments)
 
         commentsCount = TextView(context).apply {
             setTextColor(context.getColor(R.color.color_gray))
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
-            id = ViewCompat.generateViewId()
+            id = R.id.tv_comments_count
         }
         addView(commentsCount)
 
         readDuration = TextView(context).apply {
             setTextColor(context.getColor(R.color.color_gray))
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
-            id = ViewCompat.generateViewId()
+            id = R.id.tv_read_duration
         }
         addView(readDuration)
 
@@ -131,7 +131,7 @@ class ArticleItemView @JvmOverloads constructor(
             setColorFilter(
                 context.getColor(R.color.color_gray)
             )
-            id = ViewCompat.generateViewId()
+            id = R.id.iv_bookmark
         }
         addView(isBookmark)
     }

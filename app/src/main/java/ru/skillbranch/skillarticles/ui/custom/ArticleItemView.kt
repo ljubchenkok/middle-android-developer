@@ -183,21 +183,22 @@ class ArticleItemView @JvmOverloads constructor(
         author.layout(authorLeft, paddingTop, authorRight, authorBottom)
 
         val barrierTop = paddingTop + max(date.measuredHeight, author.measuredHeight)
+        val barrierBottom =
+            barrierTop + spacingLarge + max(title.measuredHeight, posterSize + categorySize / 2)
 
         val posterLeft = right - posterSize
-        val posterTop = barrierTop + spacingNormal
-        val posterBottom = barrierTop + spacingNormal + posterSize
+        val posterTop = barrierTop + (barrierBottom - barrierTop) / 2 - (posterSize + categorySize/2) / 2
+        val posterBottom = barrierTop + (barrierBottom - barrierTop) / 2 + (posterSize - categorySize/2) / 2
         poster.layout(posterLeft, posterTop, right, posterBottom)
 
 
         val categoryLeft = right - posterSize - categorySize / 2
-        val categoryTop = barrierTop + spacingNormal + posterSize - categorySize / 2
-        val categoryBottom = barrierTop + spacingNormal + posterSize + categorySize / 2
+        val categoryTop = posterBottom - categorySize/2
+        val categoryBottom = posterBottom + categorySize/2
         val categoryRight = right - posterSize + categorySize / 2
         category.layout(categoryLeft, categoryTop, categoryRight, categoryBottom)
 
-        val barrierBottom =
-            barrierTop + spacingLarge + max(title.measuredHeight, posterSize + categorySize / 2)
+
 
         val titleTop = barrierTop + (barrierBottom - barrierTop) / 2 - title.measuredHeight / 2
         val titleRight = categoryLeft - spacingNormal

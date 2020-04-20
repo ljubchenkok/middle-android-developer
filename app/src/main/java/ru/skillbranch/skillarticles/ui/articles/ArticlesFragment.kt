@@ -1,18 +1,10 @@
 package ru.skillbranch.skillarticles.ui.articles
 
-import androidx.lifecycle.ViewModelProviders
-import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_articles.*
-
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.data.ArticleItemData
 import ru.skillbranch.skillarticles.ui.base.BaseFragment
@@ -43,8 +35,6 @@ class ArticlesFragment : BaseFragment<ArticlesViewModel>() {
         )
         viewModel.navigate(NavigationCommand.To(action.actionId, action.arguments))
     }
-
-
 
     override fun setupViews() {
         with(rv_articles) {

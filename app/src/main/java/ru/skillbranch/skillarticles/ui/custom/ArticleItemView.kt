@@ -44,7 +44,6 @@ class ArticleItemView @JvmOverloads constructor(
 
     private val spacingLarge = context.dpToIntPx(16)
     private val spacingNormal = context.dpToIntPx(8)
-    private val spacingSmall = context.dpToIntPx(4)
 
     init {
         setPadding(spacingLarge, spacingLarge, spacingLarge, spacingLarge)
@@ -183,7 +182,7 @@ class ArticleItemView @JvmOverloads constructor(
         val barrierTop = max(date.measuredHeight, author.measuredHeight) + paddingTop
         val barrierBottom =
             barrierTop + spacingNormal * 2 + max(
-                title.measuredHeight,
+                title.measuredHeight + spacingNormal,
                 posterSize + categorySize / 2
             )
 

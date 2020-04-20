@@ -200,7 +200,7 @@ class ArticleItemView @JvmOverloads constructor(
         category.layout(categoryLeft, categoryTop, categoryRight, categoryBottom)
 
         val titleTop =
-            barrierTop + (barrierBottom - barrierTop) / 2 - title.measuredHeight / 2 - spacingSmall
+            barrierTop + (barrierBottom - barrierTop) / 2 - title.measuredHeight / 2
         val titleRight = left + title.measuredWidth
         val titleBottom = titleTop + title.measuredHeight
         title.layout(left, titleTop, titleRight, titleBottom)

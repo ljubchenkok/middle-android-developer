@@ -48,7 +48,6 @@ class ArticleItemView @JvmOverloads constructor(
 
     init {
         setPadding(spacingLarge, spacingLarge, spacingLarge, spacingLarge)
-        layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
         date = TextView(context).apply {
             setTextColor(context.getColor(R.color.color_gray))
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
@@ -57,7 +56,6 @@ class ArticleItemView @JvmOverloads constructor(
         }
         addView(date)
         author = TextView(context).apply {
-            layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
             setTextColor(context.attrValue(R.attr.colorPrimary))
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
             id = R.id.tv_author
@@ -74,7 +72,6 @@ class ArticleItemView @JvmOverloads constructor(
         addView(category)
 
         title = TextView(context).apply {
-            layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
             setTextColor(context.attrValue(R.attr.colorPrimary))
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
             setTypeface(typeface, Typeface.BOLD)
@@ -83,7 +80,6 @@ class ArticleItemView @JvmOverloads constructor(
         addView(title)
 
         description = TextView(context).apply {
-            layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
             setTextColor(context.getColor(R.color.color_gray))
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
             id = R.id.tv_description
@@ -147,12 +143,11 @@ class ArticleItemView @JvmOverloads constructor(
         usedHeight += max(date.measuredHeight, author.measuredHeight)
         usedHeight += spacingNormal
 
-        val titleWidth =
-            width - paddingLeft - paddingRight - posterSize - categorySize / 2 - spacingSmall
-        val titleSpec = MeasureSpec.makeMeasureSpec(titleWidth, MeasureSpec.AT_MOST)
-        measureChild(title, titleSpec, heightMeasureSpec)
-        usedHeight += max(title.measuredHeight, posterSize + categorySize / 2)
-        usedHeight += spacingNormal
+        val rh = posterSize + categorySize / 2
+        title.maxWidth = width - (rh + 2 * paddingLeft + spacingNormal * 2)
+        measureChild(title, widthMeasureSpec, heightMeasureSpec)
+        usedHeight += max(title.measuredHeight, rh) + spacingNormal
+
 
         measureChild(description, widthMeasureSpec, heightMeasureSpec)
         usedHeight += description.measuredHeight

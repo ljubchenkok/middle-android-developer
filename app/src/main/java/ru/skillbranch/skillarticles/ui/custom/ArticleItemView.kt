@@ -144,7 +144,7 @@ class ArticleItemView @JvmOverloads constructor(
         usedHeight += spacingNormal
 
         val rh = posterSize + categorySize / 2
-        title.maxWidth = width - (rh + 2 * paddingLeft + spacingNormal * 2)
+        title.maxWidth = width - (rh + 2 * paddingLeft + spacingNormal * 2 + spacingNormal)
         measureChild(title, widthMeasureSpec, heightMeasureSpec)
         usedHeight += max(title.measuredHeight, rh) + spacingNormal
 

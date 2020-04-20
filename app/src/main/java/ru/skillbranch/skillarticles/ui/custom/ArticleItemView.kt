@@ -47,7 +47,7 @@ class ArticleItemView @JvmOverloads constructor(
     private val spacingSmall = context.dpToIntPx(4)
 
     init {
-        setPadding(spacingLarge,spacingLarge,spacingLarge,spacingLarge)
+        setPadding(spacingLarge, spacingLarge, spacingLarge, spacingLarge)
         layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
         date = TextView(context).apply {
             setTextColor(context.getColor(R.color.color_gray))
@@ -145,7 +145,7 @@ class ArticleItemView @JvmOverloads constructor(
         measureChild(date, widthMeasureSpec, heightMeasureSpec)
         measureChild(author, widthMeasureSpec, heightMeasureSpec)
         usedHeight += max(date.measuredHeight, author.measuredHeight)
-        usedHeight += spacingLarge
+        usedHeight += spacingNormal
 
         val titleWidth =
             width - paddingLeft - paddingRight - posterSize - categorySize / 2 - spacingSmall
@@ -156,6 +156,7 @@ class ArticleItemView @JvmOverloads constructor(
 
         measureChild(description, widthMeasureSpec, heightMeasureSpec)
         usedHeight += description.measuredHeight
+        usedHeight += spacingNormal
 
         measureChild(likesCount, widthMeasureSpec, heightMeasureSpec)
         measureChild(commentsCount, widthMeasureSpec, heightMeasureSpec)
@@ -186,20 +187,25 @@ class ArticleItemView @JvmOverloads constructor(
 
         val barrierTop = max(date.measuredHeight, author.measuredHeight) + paddingTop
         val barrierBottom =
-            barrierTop + spacingNormal*2 + max(title.measuredHeight, posterSize + categorySize / 2)
+            barrierTop + spacingNormal * 2 + max(
+                title.measuredHeight,
+                posterSize + categorySize / 2
+            )
 
         val posterLeft = right - posterSize
-        val posterTop = barrierTop + (barrierBottom - barrierTop) / 2 - (posterSize + categorySize/2) / 2
+        val posterTop =
+            barrierTop + (barrierBottom - barrierTop) / 2 - (posterSize + categorySize / 2) / 2
         val posterBottom = posterTop + posterSize
         poster.layout(posterLeft, posterTop, right, posterBottom)
 
         val categoryLeft = posterLeft - categorySize / 2
-        val categoryTop = posterBottom - categorySize/2
+        val categoryTop = posterBottom - categorySize / 2
         val categoryBottom = categoryTop + categorySize
         val categoryRight = categoryLeft + categorySize
         category.layout(categoryLeft, categoryTop, categoryRight, categoryBottom)
 
-        val titleTop = barrierTop + (barrierBottom - barrierTop) / 2 - title.measuredHeight / 2 - spacingSmall
+        val titleTop =
+            barrierTop + (barrierBottom - barrierTop) / 2 - title.measuredHeight / 2 - spacingSmall
         val titleRight = categoryLeft - spacingSmall
         val titleBottom = titleTop + title.measuredHeight
         title.layout(left, titleTop, titleRight, titleBottom)

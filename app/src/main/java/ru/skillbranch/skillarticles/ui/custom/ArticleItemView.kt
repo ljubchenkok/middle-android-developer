@@ -142,40 +142,39 @@ class ArticleItemView @JvmOverloads constructor(
         measureChild(date, widthMeasureSpec, heightMeasureSpec)
         measureChild(author, widthMeasureSpec, heightMeasureSpec)
         usedHeight += max(date.measuredHeight, author.measuredHeight)
-        usedHeight += spacingLarge
-
         val titleWidth =
             width - paddingLeft - paddingRight - posterSize - categorySize / 2 - spacingSmall
         val titleSpec = MeasureSpec.makeMeasureSpec(titleWidth, MeasureSpec.AT_MOST)
         measureChild(title, titleSpec, heightMeasureSpec)
-        usedHeight += max(title.measuredHeight, posterSize + categorySize / 2)
-        usedHeight += spacingNormal
-
+        usedHeight += max(
+            title.measuredHeight + spacingNormal,
+            posterSize + categorySize / 2
+        )
         measureChild(description, widthMeasureSpec, heightMeasureSpec)
         usedHeight += description.measuredHeight
-
         measureChild(likesCount, widthMeasureSpec, heightMeasureSpec)
         measureChild(commentsCount, widthMeasureSpec, heightMeasureSpec)
         measureChild(readDuration, widthMeasureSpec, heightMeasureSpec)
-
         usedHeight += listOf(
             likesCount.measuredHeight,
             commentsCount.measuredHeight,
             readDuration.measuredHeight,
             iconSize
         ).max() ?: 0
+
         usedHeight += paddingBottom
+        usedHeight += spacingNormal*3
         setMeasuredDimension(width, usedHeight)
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-        val bodyWidth = r - l - paddingLeft - paddingRight
+        val bodyWidth = right - left - paddingLeft - paddingRight
         val left = paddingLeft
         val right = paddingLeft + bodyWidth
         val top = paddingTop
 
         val dateRight = date.measuredWidth + paddingLeft
-        date.layout(left, top, dateRight, date.measuredHeight + paddingTop)
+        date.layout(left, top, left + date.measuredWidth, date.measuredHeight + paddingTop)
 
         val authorLeft = dateRight + spacingLarge
         val authorBottom = author.measuredHeight + paddingTop
@@ -183,24 +182,24 @@ class ArticleItemView @JvmOverloads constructor(
 
         val barrierTop = max(date.measuredHeight, author.measuredHeight) + paddingTop
         val barrierBottom =
-            barrierTop + spacingNormal*2 + max(title.measuredHeight, posterSize + categorySize / 2)
+            barrierTop + max(title.measuredHeight + spacingNormal, posterSize + categorySize / 2 + spacingNormal) + spacingNormal
+
+        val titleTop = barrierTop + (barrierBottom - barrierTop) / 2 - title.measuredHeight / 2 - spacingSmall
+        val titleRight = right - posterSize - (categorySize / 2 + spacingSmall)
+        val titleBottom = titleTop + title.measuredHeight
+        title.layout(left, titleTop, titleRight, titleBottom)
 
         val posterLeft = right - posterSize
-        val posterTop = barrierTop + (barrierBottom - barrierTop) / 2 - (posterSize + categorySize/2) / 2
+        val posterTop = barrierTop + (barrierBottom - barrierTop) / 2 - (posterSize + categorySize / 2) / 2
         val posterBottom = posterTop + posterSize
         poster.layout(posterLeft, posterTop, right, posterBottom)
 
-        val categoryLeft = posterLeft - categorySize / 2
-        val categoryTop = posterBottom - categorySize/2
+        val categoryLeft = right - posterSize - categorySize / 2
+        val categoryTop =  posterTop + posterSize - categorySize / 2
         val categoryBottom = categoryTop + categorySize
-        val categoryRight = categoryLeft + categorySize
+        val categoryRight = right - posterSize + categorySize / 2
         category.layout(categoryLeft, categoryTop, categoryRight, categoryBottom)
 
-        val titleTop = barrierTop + (barrierBottom - barrierTop) / 2 - title.measuredHeight / 2 - spacingSmall
-        val titleRight = categoryLeft - spacingSmall
-        val titleBottom = titleTop + title.measuredHeight
-        title.layout(left, titleTop, titleRight, titleBottom)
-        title.maxWidth = width-paddingLeft-paddingRight-posterSize-categorySize/2 + spacingNormal
 
         var descriptionBottom = barrierBottom + description.measuredHeight
         description.layout(left, barrierBottom, right, descriptionBottom)

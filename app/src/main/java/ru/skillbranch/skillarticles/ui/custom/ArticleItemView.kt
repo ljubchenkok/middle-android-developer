@@ -57,6 +57,7 @@ class ArticleItemView @JvmOverloads constructor(
         }
         addView(date)
         author = TextView(context).apply {
+            layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
             setTextColor(context.attrValue(R.attr.colorPrimary))
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
             id = R.id.tv_author
@@ -73,6 +74,7 @@ class ArticleItemView @JvmOverloads constructor(
         addView(category)
 
         title = TextView(context).apply {
+            layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
             setTextColor(context.attrValue(R.attr.colorPrimary))
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
             setTypeface(typeface, Typeface.BOLD)
@@ -81,6 +83,7 @@ class ArticleItemView @JvmOverloads constructor(
         addView(title)
 
         description = TextView(context).apply {
+            layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
             setTextColor(context.getColor(R.color.color_gray))
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
             id = R.id.tv_description
@@ -200,7 +203,6 @@ class ArticleItemView @JvmOverloads constructor(
         val titleRight = categoryLeft - spacingSmall
         val titleBottom = titleTop + title.measuredHeight
         title.layout(left, titleTop, titleRight, titleBottom)
-        title.maxWidth = width-paddingLeft-paddingRight-posterSize-categorySize/2 + spacingNormal
 
         var descriptionBottom = barrierBottom + description.measuredHeight
         description.layout(left, barrierBottom, right, descriptionBottom)

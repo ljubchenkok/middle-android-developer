@@ -48,17 +48,17 @@ class ArticleItemView @JvmOverloads constructor(
 
     init {
         setPadding(spacingLarge,spacingLarge,spacingLarge,spacingLarge)
-        layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
+        layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
         date = TextView(context).apply {
             setTextColor(context.getColor(R.color.color_gray))
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
+            textSize = 12f
             id = R.id.tv_title
 
         }
         addView(date)
         author = TextView(context).apply {
             setTextColor(context.attrValue(R.attr.colorPrimary))
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
+           textSize = 12f
             id = R.id.tv_author
         }
         addView(author)
@@ -73,8 +73,9 @@ class ArticleItemView @JvmOverloads constructor(
         addView(category)
 
         title = TextView(context).apply {
+            layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
             setTextColor(context.attrValue(R.attr.colorPrimary))
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
+            textSize = 18f
             setTypeface(typeface, Typeface.BOLD)
             id = R.id.tv_title
         }
@@ -82,7 +83,7 @@ class ArticleItemView @JvmOverloads constructor(
 
         description = TextView(context).apply {
             setTextColor(context.getColor(R.color.color_gray))
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
+            textSize = 14f
             id = R.id.tv_description
         }
         addView(description)
@@ -98,7 +99,7 @@ class ArticleItemView @JvmOverloads constructor(
 
         likesCount = TextView(context).apply {
             setTextColor(context.getColor(R.color.color_gray))
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
+            textSize = 12f
             id = R.id.tv_likes_count
         }
         addView(likesCount)
@@ -114,14 +115,14 @@ class ArticleItemView @JvmOverloads constructor(
 
         commentsCount = TextView(context).apply {
             setTextColor(context.getColor(R.color.color_gray))
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
+            textSize = 12f
             id = R.id.tv_comments_count
         }
         addView(commentsCount)
 
         readDuration = TextView(context).apply {
             setTextColor(context.getColor(R.color.color_gray))
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
+            textSize = 12f
             id = R.id.tv_read_duration
         }
         addView(readDuration)

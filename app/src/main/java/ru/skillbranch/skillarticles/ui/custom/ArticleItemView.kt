@@ -52,8 +52,7 @@ class ArticleItemView @JvmOverloads constructor(
         date = TextView(context).apply {
             setTextColor(context.getColor(R.color.color_gray))
             textSize = 12f
-            id = R.id.tv_title
-
+            id = R.id.tv_date
         }
         addView(date)
         author = TextView(context).apply {

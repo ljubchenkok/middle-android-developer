@@ -46,7 +46,7 @@ object LocalDataHolder {
     }
 
     fun updateArticlePersonalInfo(info: ArticlePersonalInfo) {
-        Log.e("DataHolder", "update personal info: $info");
+        Log.e("DataHolder", "update personal info: $info")
         articleInfo.value = info
     }
 
@@ -57,7 +57,7 @@ object LocalDataHolder {
                 article,
                 article.copy(
                     id = "1",
-                    title = "Architecture Components pitfalls",
+                    title = "Architecture Components pitfalls Architecture Components pitfallsArchitecture Components pitfalls Architecture Components pitfalls Architecture Components pitfalls Architecture Components pitfalls",
                     description = "LiveData and the Fragment lifecycle",
                     author = "Christophe Beyls",
                     authorAvatar = "https://miro.medium.com/fit/c/96/96/0*zhOjC9mtKiAzmBQo.png",

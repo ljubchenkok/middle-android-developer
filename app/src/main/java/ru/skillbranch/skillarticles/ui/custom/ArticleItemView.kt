@@ -3,7 +3,6 @@ package ru.skillbranch.skillarticles.ui.custom
 import android.content.Context
 import android.graphics.Typeface
 import android.util.AttributeSet
-import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -49,14 +48,14 @@ class ArticleItemView @JvmOverloads constructor(
         setPadding(spacingLarge, spacingLarge, spacingLarge, spacingLarge)
         date = TextView(context).apply {
             setTextColor(context.getColor(R.color.color_gray))
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
+            textSize = 12f
             id = R.id.tv_date
 
         }
         addView(date)
         author = TextView(context).apply {
             setTextColor(context.attrValue(R.attr.colorPrimary))
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
+            textSize = 12f
             id = R.id.tv_author
         }
         addView(author)
@@ -72,15 +71,15 @@ class ArticleItemView @JvmOverloads constructor(
 
         title = TextView(context).apply {
             setTextColor(context.attrValue(R.attr.colorPrimary))
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
-            setTypeface(typeface, Typeface.BOLD)
+            textSize = 18f
+            typeface = Typeface.DEFAULT_BOLD
             id = R.id.tv_title
         }
         addView(title)
 
         description = TextView(context).apply {
             setTextColor(context.getColor(R.color.color_gray))
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
+            textSize = 14f
             id = R.id.tv_description
         }
         addView(description)
@@ -96,7 +95,7 @@ class ArticleItemView @JvmOverloads constructor(
 
         likesCount = TextView(context).apply {
             setTextColor(context.getColor(R.color.color_gray))
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
+            textSize = 12f
             id = R.id.tv_likes_count
         }
         addView(likesCount)
@@ -112,14 +111,14 @@ class ArticleItemView @JvmOverloads constructor(
 
         commentsCount = TextView(context).apply {
             setTextColor(context.getColor(R.color.color_gray))
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
+            textSize = 12f
             id = R.id.tv_comments_count
         }
         addView(commentsCount)
 
         readDuration = TextView(context).apply {
             setTextColor(context.getColor(R.color.color_gray))
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
+            textSize = 12f
             id = R.id.tv_read_duration
         }
         addView(readDuration)
@@ -143,7 +142,8 @@ class ArticleItemView @JvmOverloads constructor(
         usedHeight += spacingNormal
 
         val posterWithCategorySize = posterSize + categorySize / 2
-        title.maxWidth = width - (posterWithCategorySize + paddingLeft + paddingRight + spacingNormal)
+        title.maxWidth =
+            width - (posterWithCategorySize + paddingLeft + paddingRight + spacingNormal)
         measureChild(title, widthMeasureSpec, heightMeasureSpec)
         usedHeight += max(title.measuredHeight, posterWithCategorySize) + spacingNormal
 
@@ -181,7 +181,7 @@ class ArticleItemView @JvmOverloads constructor(
 
         val barrierTop = max(date.measuredHeight, author.measuredHeight) + paddingTop
         val barrierBottom =
-            barrierTop + spacingNormal*2 + max(
+            barrierTop + spacingNormal * 2 + max(
                 title.measuredHeight,
                 posterSize + categorySize / 2
             )

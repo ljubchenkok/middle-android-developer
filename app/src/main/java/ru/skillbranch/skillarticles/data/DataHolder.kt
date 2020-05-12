@@ -57,8 +57,8 @@ object LocalDataHolder {
                 article,
                 article.copy(
                     id = "1",
-                    title = "Architecture Components pitfalls Architecture Components pitfallsArchitecture Components pitfalls Architecture Components pitfalls Architecture Components pitfalls Architecture Components pitfalls",
-                    description = "LiveData and the Fragment lifecycle",
+                    title = "Architecture Components pitfallsArchitecture Components pitfalls Architecture Components pitfalls Architecture Components pitfalls Architecture Components pitfalls",
+                    description = "LiveData and the Fragment lifecycle LiveData and the Fragment lifecycle",
                     author = "Christophe Beyls",
                     authorAvatar = "https://miro.medium.com/fit/c/96/96/0*zhOjC9mtKiAzmBQo.png",
                     poster = "https://miro.medium.com/max/800/1*Cd_1M-LJ46t6xo79LfMGVw.jpeg"

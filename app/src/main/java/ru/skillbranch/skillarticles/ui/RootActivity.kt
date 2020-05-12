@@ -12,6 +12,7 @@ import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.extensions.hideKeyBoard
 import ru.skillbranch.skillarticles.extensions.selectDestination
 import ru.skillbranch.skillarticles.ui.base.BaseActivity
+import ru.skillbranch.skillarticles.ui.custom.Bottombar
 import ru.skillbranch.skillarticles.viewmodels.RootViewModel
 import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
 import ru.skillbranch.skillarticles.viewmodels.base.NavigationCommand
@@ -39,7 +40,10 @@ class RootActivity : BaseActivity<RootViewModel>() {
             true
         }
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
-            if (isAuth && destination.id == R.id.nav_auth) viewModel.navigate(NavigationCommand.To(R.id.nav_profile))
+            if (viewModel.currentState.isAuth && destination.id == R.id.nav_auth) {
+                controller.popBackStack()
+                viewModel.navigate(NavigationCommand.To(R.id.nav_profile))
+            }
             else nav_view.selectDestination(destination)
         }
 
@@ -48,15 +52,13 @@ class RootActivity : BaseActivity<RootViewModel>() {
 
     override fun renderNotification(notify: Notify) {
         val snackbar = Snackbar.make(container, notify.message, Snackbar.LENGTH_LONG)
-        if (bottombar != null) snackbar.anchorView = bottombar
-        else snackbar.anchorView = nav_view
-
-//        snackbar.setActionTextColor(getColor(R.color.color_accent_dark))
+        snackbar.anchorView = findViewById<Bottombar>(R.id.bottombar) ?: nav_view
 
         when (notify) {
             is Notify.TextMessage -> {
             }
             is Notify.ActionMessage -> {
+                snackbar.setActionTextColor(getColor(R.color.color_accent_dark))
                 snackbar.setAction(notify.actionLabel) {
                     notify.actionHandler.invoke()
                 }
@@ -79,14 +81,12 @@ class RootActivity : BaseActivity<RootViewModel>() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_search) {
-//            viewModel.handleSearchMode(true)
             return true
         }
         return super.onOptionsItemSelected(item)
     }
 
     override fun subscribeOnState(state: IViewModelState) {
-        val n = 0
     }
 
 

@@ -12,51 +12,70 @@ object ArticlesRepository {
     private val local = LocalDataHolder
     private val network = NetworkDataHolder
 
-    fun allArticles(): ArticlesDataFactory = ArticlesDataFactory(ArticleStrategy.AllArticles(::findArticlesByRange))
+
+    fun updateBookmark(id: String, isChecked: Boolean){
+        val currentArticleItem = local.localArticleItems.find {it.id == id}
+        val currentArticleItemIndex = local.localArticleItems.indexOf(currentArticleItem)
+        if(currentArticleItemIndex != -1)
+            local.localArticleItems[currentArticleItemIndex] = local.localArticleItems[currentArticleItemIndex].copy(isBookmark = isChecked)
+    }
+
+    fun allArticles(): ArticlesDataFactory =
+        ArticlesDataFactory(ArticleStrategy.AllArticles(::findArticlesByRange))
 
     fun searchArticles(searchQuery: String) =
         ArticlesDataFactory(ArticleStrategy.SearchArticle(::searchArticleByTitle, searchQuery))
 
-    private fun searchArticleByTitle(start:Int, size:Int, queryTitle: String) = local.localArticleItems
-        .asSequence()
-        .filter { it.title.contains(queryTitle,true) }
+    private fun searchArticleByTitle(start: Int, size: Int, queryTitle: String) =
+        local.localArticleItems
+            .asSequence()
+            .filter { it.title.contains(queryTitle, true) }
+            .drop(start)
+            .take(size)
+            .toList()
+
+    private fun findArticlesByRange(start: Int, size: Int) = local.localArticleItems
         .drop(start)
         .take(size)
-        .toList()
 
-    private fun findArticlesByRange(start:Int, size:Int) = local.localArticleItems
-        .drop(start)
-        .take(size)
+    fun loadArticlesFromNetwork(start: Int, size: Int): List<ArticleItemData> =
+        network.networkArticleItems
+            .drop(start)
+            .take(size)
+            .apply { sleep(500) }
 
-    fun loadArticlesFromNetwork(start:Int, size:Int):List<ArticleItemData> = network.networkArticleItems
-        .drop(start)
-        .take(size)
-        .apply { sleep(500) }
-
-    fun inseartArticlesToDb(articles:List<ArticleItemData>){
+    fun insertArticlesToDb(articles: List<ArticleItemData>) {
         local.localArticleItems.addAll(articles)
             .apply { sleep(500) }
     }
 }
 
-class ArticlesDataFactory(val stratagy: ArticleStrategy): DataSource.Factory<Int, ArticleItemData>(){
+class ArticlesDataFactory(val stratagy: ArticleStrategy) :
+    DataSource.Factory<Int, ArticleItemData>() {
     override fun create(): DataSource<Int, ArticleItemData> = ArticleDataSource(stratagy)
 }
 
-class ArticleDataSource(private val stratagy: ArticleStrategy) : PositionalDataSource<ArticleItemData>() {
+class ArticleDataSource(private val stratagy: ArticleStrategy) :
+    PositionalDataSource<ArticleItemData>() {
 
     override fun loadInitial(
         params: LoadInitialParams,
         callback: LoadInitialCallback<ArticleItemData>
     ) {
         val result = stratagy.getItems(params.requestedStartPosition, params.requestedLoadSize)
-        Log.e("ArticlesRepository", "loadInitial: start > ${params.requestedStartPosition} size > ${params.requestedLoadSize} resultSize > ${result.size} " )
+        Log.e(
+            "ArticlesRepository",
+            "loadInitial: start > ${params.requestedStartPosition} size > ${params.requestedLoadSize} resultSize > ${result.size} "
+        )
         callback.onResult(result, params.requestedStartPosition)
     }
 
     override fun loadRange(params: LoadRangeParams, callback: LoadRangeCallback<ArticleItemData>) {
         val result = stratagy.getItems(params.startPosition, params.loadSize)
-        Log.e("ArticlesRepository", "loadRange: start > ${params.startPosition} size > ${params.loadSize} resultSize > ${result.size} " )
+        Log.e(
+            "ArticlesRepository",
+            "loadRange: start > ${params.startPosition} size > ${params.loadSize} resultSize > ${result.size} "
+        )
         callback.onResult(result)
     }
 }

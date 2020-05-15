@@ -56,6 +56,7 @@ class RootActivity : BaseActivity<RootViewModel>() {
 
         when (notify) {
             is Notify.TextMessage -> {
+                snackbar.setActionTextColor(getColor(R.color.color_accent_dark))
             }
             is Notify.ActionMessage -> {
                 snackbar.setActionTextColor(getColor(R.color.color_accent_dark))

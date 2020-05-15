@@ -73,7 +73,7 @@ class CommentItemView(context: Context) : ViewGroup(context, null, 0) {
         addView(tv_answer_to)
 
         iv_answer_icon = ImageView(context).apply {
-//            setImageResource(R.drawable.ic_reply_black_24dp)
+            setImageResource(R.drawable.ic_reply_black_24dp)
             imageTintList = ColorStateList.valueOf(grayColor)
             isVisible = false
         }
@@ -177,7 +177,9 @@ class CommentItemView(context: Context) : ViewGroup(context, null, 0) {
 
     fun bind(item: CommentItemData?) {
         if (item == null) {
-            //TODO show shimmer
+            tv_author.text = "Loading..."
+            tv_date.text = "Loading..."
+            tv_body.text = "Loading..."
         } else {
             val level = min(item.slug.split("/").size.dec(), 5)
             setPaddingOptionally(left = level * defaultHSpace)

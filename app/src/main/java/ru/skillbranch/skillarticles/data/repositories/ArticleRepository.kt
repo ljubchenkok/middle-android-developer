@@ -15,6 +15,7 @@ object ArticleRepository {
     private val local = LocalDataHolder
     private val network = NetworkDataHolder
 
+
     fun loadArticleContent(articleId: String): LiveData<List<MarkdownElement>?> {
         return Transformations.map(network.loadArticleContent(articleId)) {
             return@map if (it == null) null
@@ -59,7 +60,7 @@ object ArticleRepository {
                 .take(size)
             size > 0 -> data
                 .dropWhile { it.slug != slug }
-                .drop(11)
+                .drop(1)
                 .take(size)
             size < 0 -> data
                 .dropLastWhile { it.slug != slug }

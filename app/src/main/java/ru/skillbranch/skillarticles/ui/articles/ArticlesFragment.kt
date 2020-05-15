@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_articles.*
 import ru.skillbranch.skillarticles.R
+import ru.skillbranch.skillarticles.data.models.ArticleItemData
 import ru.skillbranch.skillarticles.ui.base.BaseFragment
 import ru.skillbranch.skillarticles.ui.base.Binding
 import ru.skillbranch.skillarticles.ui.base.MenuItemHolder
@@ -35,11 +36,9 @@ class ArticlesFragment : BaseFragment<ArticlesViewModel>() {
                 R.layout.search_view_layout
             )
         )
-
-
     }
 
-    private val articlesAdapter = ArticlesAdapter { item ->
+    private fun navigateToArticle(item: ArticleItemData){
         Log.e("ArticlesFragment", "click on article ${item.id}")
         val action = ArticlesFragmentDirections.actionNavArticlesToPageArticle(
             item.id,
@@ -53,6 +52,15 @@ class ArticlesFragment : BaseFragment<ArticlesViewModel>() {
         )
         viewModel.navigate(NavigationCommand.To(action.actionId, action.arguments))
     }
+
+    private fun toggleBookmark(item: ArticleItemData){
+        viewModel.handleToggleBookmark(item.id, !item.isBookmark)
+    }
+
+    private val articlesAdapter = ArticlesAdapter (
+        ::navigateToArticle,
+        ::toggleBookmark
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

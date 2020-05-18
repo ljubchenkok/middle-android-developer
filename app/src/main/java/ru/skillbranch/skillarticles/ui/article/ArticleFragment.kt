@@ -11,6 +11,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -45,8 +46,8 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
     }
 
     private val commentAdapter by lazy {
-        CommentsAdapter{
-            viewModel.handleReplyTo(it.slug,it.user.name)
+        CommentsAdapter {
+            viewModel.handleReplyTo(it.slug, it.user.name)
             et_comment.requestFocus()
             scroll.smoothScrollTo(0, wrap_comments.top)
             et_comment.context.showKeyboard(et_comment)
@@ -107,15 +108,18 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
         tv_author.text = args.author
         tv_date.text = args.date.format()
 
-        et_comment.setOnEditorActionListener{view, _ , _->
+        et_comment.addTextChangedListener {
+            viewModel.handleChangeComment(it.toString())
+        }
+
+        et_comment.setOnEditorActionListener { view, _, _ ->
             root.hideKeyBoard(view)
             viewModel.handleSendComment(view.text.toString())
-            view.text = null
             view.clearFocus()
             true
         }
 
-        et_comment.setOnFocusChangeListener { _, hasFocus -> viewModel.handleCommentFocus(hasFocus)  }
+        et_comment.setOnFocusChangeListener { _, hasFocus -> viewModel.handleCommentFocus(hasFocus) }
 
         wrap_comments.setEndIconOnClickListener { view ->
             view.context.hideKeyBoard(view)
@@ -124,12 +128,12 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
             et_comment.clearFocus()
         }
 
-        with(rv_comments){
+        with(rv_comments) {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = commentAdapter
         }
 
-        viewModel.observeList(viewLifecycleOwner){commentAdapter.submitList(it)}
+        viewModel.observeList(viewLifecycleOwner) { commentAdapter.submitList(it) }
 
     }
 
@@ -196,8 +200,6 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
     }
 
 
-
-
     private fun setupSubmenu() {
         submenu.btn_text_up.setOnClickListener { viewModel.handleUpText() }
         submenu.btn_text_down.setOnClickListener { viewModel.handleDownText() }
@@ -246,7 +248,9 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
 
 
         private var isLike: Boolean by RenderProp(false) { bottombar.btn_like.isChecked = it }
-        private var isBookmark: Boolean by RenderProp(false) { bottombar.btn_bookmark.isChecked = it }
+        private var isBookmark: Boolean by RenderProp(false) {
+            bottombar.btn_bookmark.isChecked = it
+        }
         private var isShowMenu: Boolean by RenderProp(false) {
             bottombar.btn_settings.isChecked = it
             if (it) submenu.open() else submenu.close()
@@ -287,7 +291,9 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
                 }
             }
         }
-        private var searchResults: List<Pair<Int, Int>> by RenderProp<List<Pair<Int, Int>>>(emptyList())
+        private var searchResults: List<Pair<Int, Int>> by RenderProp<List<Pair<Int, Int>>>(
+            emptyList()
+        )
         private var searchPosition: Int by RenderProp(0)
         private var content: List<MarkdownElement> by RenderProp<List<MarkdownElement>>(emptyList()) {
 //            tv_text_content.isLoading = it.isEmpty()
@@ -295,10 +301,13 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
             if (it.isNotEmpty()) setupCopyListener()
         }
 
-        private var answerTo by RenderProp("Comments"){wrap_comments.hint = it}
-        private var isShowBottombar by RenderProp(true){
-            if(it) bottombar.show() else bottombar.hide()
-            if(submenu.isOpen) submenu.isVisible = it
+        private var answerTo by RenderProp("Comments") { wrap_comments.hint = it }
+        private var comment by RenderProp("", false) {
+            if(it.isNullOrEmpty()) et_comment.text = null
+        }
+        private var isShowBottombar by RenderProp(true) {
+            if (it) bottombar.show() else bottombar.hide()
+            if (submenu.isOpen) submenu.isVisible = it
         }
 
 
@@ -335,7 +344,7 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
             searchQuery = data.searchQuery
             searchPosition = data.searchPosition
             searchResults = data.searchResults
-
+            comment = data.comment ?: ""
             answerTo = data.answerTo ?: "Comment"
             isShowBottombar = data.showBottombar
 

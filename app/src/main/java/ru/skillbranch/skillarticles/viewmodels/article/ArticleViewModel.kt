@@ -195,7 +195,7 @@ class ArticleViewModel(
             viewModelScope.launch {
                 repository.sendComment(articleId, comment, currentState.answerToSlug)
                 withContext(Dispatchers.Main) {
-                    updateState { it.copy(answerTo = null, answerToSlug = null) }
+                    updateState { it.copy(answerTo = null, answerToSlug = null, comment = null) }
                 }
             }
         }
@@ -231,6 +231,11 @@ class ArticleViewModel(
         updateState { it.copy(answerToSlug = slug, answerTo = "Reply to $name") }
     }
 
+    fun handleChangeComment(comment: String) {
+        updateState { it.copy(comment = comment) }
+
+    }
+
 }
 
 
@@ -258,7 +263,8 @@ data class ArticleState(
     val commentsCount: Int = 0,
     val answerTo: String? = null,
     val answerToSlug: String? = null,
-    val showBottombar: Boolean = true
+    val showBottombar: Boolean = true,
+    val comment: String? = null
 
 ) : IViewModelState {
     override fun save(outState: SavedStateHandle) {

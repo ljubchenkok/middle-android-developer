@@ -24,7 +24,7 @@ object ArticlesRepository {
         ArticlesDataFactory(ArticleStrategy.AllArticles(::findArticlesByRange))
 
     fun allBookmarkedArticles(): ArticlesDataFactory =
-        ArticlesDataFactory(ArticleStrategy.AllArticles(::findBookmarkedArticlesByRange))
+        ArticlesDataFactory(ArticleStrategy.AllBookmarkArticles(::findBookmarkedArticlesByRange))
 
     fun searchArticles(searchQuery: String) =
         ArticlesDataFactory(ArticleStrategy.SearchArticle(::searchArticleByTitle, searchQuery))
@@ -103,6 +103,12 @@ sealed class ArticleStrategy() {
     abstract fun getItems(start: Int, size: Int): List<ArticleItemData>
 
     class AllArticles(
+        private val itemProvider: (Int, Int) -> List<ArticleItemData>
+    ) : ArticleStrategy() {
+        override fun getItems(start: Int, size: Int): List<ArticleItemData> =
+            itemProvider(start, size)
+    }
+    class AllBookmarkArticles(
         private val itemProvider: (Int, Int) -> List<ArticleItemData>
     ) : ArticleStrategy() {
         override fun getItems(start: Int, size: Int): List<ArticleItemData> =

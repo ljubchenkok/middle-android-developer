@@ -18,13 +18,14 @@ import ru.skillbranch.skillarticles.ui.base.MenuItemHolder
 import ru.skillbranch.skillarticles.ui.base.ToolbarBuilder
 import ru.skillbranch.skillarticles.ui.delegates.RenderProp
 import ru.skillbranch.skillarticles.viewmodels.articles.ArticlesState
+import ru.skillbranch.skillarticles.viewmodels.articles.ArticlesViewModel
 import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
 import ru.skillbranch.skillarticles.viewmodels.base.NavigationCommand
 import ru.skillbranch.skillarticles.viewmodels.bookmarks.BookmarksViewModel
 
-class BookmarksFragment : BaseFragment<BookmarksViewModel>() {
+class BookmarksFragment : BaseFragment<ArticlesViewModel>() {
 
-    override val viewModel: BookmarksViewModel by viewModels()
+    override val viewModel: ArticlesViewModel by viewModels()
     override val layout: Int = R.layout.fragment_bookmarks
     override val binding: BookmarksBinding by lazy { BookmarksBinding() }
 
@@ -112,7 +113,7 @@ class BookmarksFragment : BaseFragment<BookmarksViewModel>() {
             addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
         }
 
-        viewModel.observeList(viewLifecycleOwner) {
+        viewModel.observeList(viewLifecycleOwner, true) {
             articlesAdapter.submitList(it)
         }
     }

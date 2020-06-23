@@ -43,6 +43,10 @@
         <action
             android:id="@+id/action_nav_articles_to_page_article"
             app:destination="@id/page_article" />
+        <argument
+            android:name="isBookmarks"
+            app:argType="boolean"
+            android:defaultValue="false" />
     </fragment>
     <fragment
         android:id="@+id/nav_profile"

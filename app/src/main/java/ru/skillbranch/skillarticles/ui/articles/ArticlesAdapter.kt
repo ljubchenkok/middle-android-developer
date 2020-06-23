@@ -13,7 +13,7 @@ class ArticlesAdapter(
     private val listener: (ArticleItemData) -> Unit,
     private val toggleBookmarkListener: (ArticleItemData) -> Unit
 ) :
-    PagedListAdapter<ArticleItemData, ArticleVH>(ArticleDiffCallback()) {
+        PagedListAdapter<ArticleItemData, ArticleVH>(ArticleDiffCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticleVH {
         val containerView = ArticleItemView(parent.context)
         return ArticleVH(containerView)
@@ -27,7 +27,7 @@ class ArticlesAdapter(
 
 class ArticleDiffCallback : DiffUtil.ItemCallback<ArticleItemData>() {
     override fun areItemsTheSame(oldItem: ArticleItemData, newItem: ArticleItemData): Boolean =
-        oldItem.id == newItem.id
+         oldItem.id == newItem.id
 
     override fun areContentsTheSame(oldItem: ArticleItemData, newItem: ArticleItemData): Boolean =
         oldItem == newItem

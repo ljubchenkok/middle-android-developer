@@ -144,7 +144,7 @@ private fun ArticlesState.toArticleFilter(): ArticleFilter = ArticleFilter(
     search = searchQuery,
     isBookmark = isBookmark,
     categories = selectedCategories,
-    isHashTag = isHashtagSearch
+    isHashtag = isHashtagSearch
 )
 
 

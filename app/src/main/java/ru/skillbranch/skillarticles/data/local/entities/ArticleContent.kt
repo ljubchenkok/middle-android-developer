@@ -20,11 +20,11 @@ data class ArticleContent(
     @PrimaryKey
     @ColumnInfo(name = "article_id")
     val articleId: String,
-    val content:String,
-    val source:String?=null,
-    @ColumnInfo(name="share_link")
-    val shareLink:String,
-    @ColumnInfo(name="updated_at")
-    val updetedAt:Date = Date()
+    val content: String,
+    val source: String? = null,
+    @ColumnInfo(name = "share_link")
+    val shareLink: String,
+    @ColumnInfo(name = "updated_at")
+    val updetedAt: Date = Date()
 
-    )
+)

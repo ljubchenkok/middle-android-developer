@@ -13,7 +13,7 @@ interface TagsDao:BaseDao<Tag> {
 
     @Query("""
         SELECT tag from article_tag
-        ORDER BY use_count
+        ORDER BY use_count DESC
     """)
     fun findTags():LiveData<List<String>>
 
@@ -22,7 +22,6 @@ interface TagsDao:BaseDao<Tag> {
         WHERE tag = :tag
     """)
     fun incrementTagUseCount(tag:String)
-
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertRefs(refs: List<ArticleTagXRef>):List<Long>
 }

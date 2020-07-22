@@ -4,12 +4,16 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
+import android.text.style.URLSpan
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
+import android.widget.TextView
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
+import androidx.core.text.buildSpannedString
+import androidx.core.text.inSpans
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
@@ -30,6 +34,8 @@ import ru.skillbranch.skillarticles.extensions.*
 import ru.skillbranch.skillarticles.ui.base.*
 import ru.skillbranch.skillarticles.ui.custom.ArticleSubmenu
 import ru.skillbranch.skillarticles.ui.custom.Bottombar
+import ru.skillbranch.skillarticles.ui.custom.spans.IconLinkSpan
+import ru.skillbranch.skillarticles.ui.custom.spans.InlineCodeSpan
 import ru.skillbranch.skillarticles.ui.delegates.RenderProp
 import ru.skillbranch.skillarticles.viewmodels.article.ArticleState
 import ru.skillbranch.skillarticles.viewmodels.article.ArticleViewModel
@@ -310,6 +316,43 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
             if (submenu.isOpen) submenu.isVisible = it
         }
 
+        private val colorPrimary = root.attrValue(R.attr.colorPrimary)
+        private val colorSecondary = root.attrValue(R.attr.colorSecondary)
+        private val colorOnSurface = root.attrValue(R.attr.colorOnSurface)
+        private val opacityColorSurface = root.getColor(R.color.opacity_color_surface)
+        private val cornerRadius = root.dpToPx(8)
+        private val gap = root.dpToPx(8)
+        private val strikeWidth = root.dpToPx(4)
+
+
+        private var tags: List<String> by RenderProp(emptyList()) {list->
+            tv_hashtags.isVisible = list.isNotEmpty()
+            val spanned = buildSpannedString {
+                list.forEach {
+                    inSpans(InlineCodeSpan(colorOnSurface, opacityColorSurface, cornerRadius, gap)) {
+                        append(it)
+                    }
+                }
+            }
+            tv_hashtags.setText(spanned, TextView.BufferType.SPANNABLE)
+        }
+
+        private val linkIcon = root.getDrawable(R.drawable.ic_link_black_24dp)!!.apply {
+           setTint(colorSecondary)
+        }
+
+        private var source by RenderProp("") {
+            tv_source.isVisible = it.isNotBlank()
+            val spanned = buildSpannedString {
+                inSpans(
+                    IconLinkSpan(linkIcon, gap, colorPrimary, strikeWidth),
+                    URLSpan(it)
+                ) {
+                    append("Article source")
+                }
+            }
+            tv_source.setText(spanned, TextView.BufferType.SPANNABLE)
+        }
 
         override val afterInflated: (() -> Unit)? = {
             dependsOn<Boolean, Boolean, List<Pair<Int, Int>>, Int>(
@@ -335,10 +378,7 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
             isShowMenu = data.isShowMenu
             isBigText = data.isBigText
             isDarkMode = data.isDarkMode
-
-
             content = data.content
-
             isLoadingContent = data.isLoadingContent
             isSearch = data.isSearch
             searchQuery = data.searchQuery
@@ -347,6 +387,8 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
             comment = data.comment ?: ""
             answerTo = data.answerTo ?: "Comment"
             isShowBottombar = data.showBottombar
+            tags = data.tags
+            source = data.source ?: ""
 
         }
 

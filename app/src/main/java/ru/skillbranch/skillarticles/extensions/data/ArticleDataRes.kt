@@ -14,4 +14,5 @@ fun ArticleDataRes.toArticle(): Article = Article(
     author = author,
     date = date,
     updatedAt = Date()
+
 )

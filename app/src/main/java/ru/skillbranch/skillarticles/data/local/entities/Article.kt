@@ -44,7 +44,7 @@ data class ArticleItem(
     val date: Date = Date(),
     val author: String,
     @ColumnInfo(name = "author_avatar")
-    val authorAvatar: String,
+    val authorAvatar: String?,
     val title: String,
     val description: String,
     val poster: String,
@@ -66,10 +66,10 @@ data class ArticleItem(
 
 @DatabaseView(
     """
-        SELECT id, article.title AS title, description, author_user_id, author_avatar, author_name, date,
+       SELECT id, article.title AS title, description, author_user_id, author_avatar, author_name, date, 
         category.category_id AS category_category_id, category.title AS category_title, category.icon AS category_icon,
         content.share_link AS share_link, content.content AS content,
-        personal.is_bookmark  AS is_bookmark, personal.is_like AS is_like
+        personal.is_bookmark AS is_bookmark, personal.is_like AS is_like, content.source as source
         FROM articles AS article
         INNER JOIN article_categories AS category ON category.category_id = article.category_id
         LEFT JOIN article_content AS content ON content.article_id = id
@@ -86,13 +86,25 @@ data class ArticleFull(
     @Embedded(prefix = "category_")
     val category: Category,
     @ColumnInfo(name = "shared_link")
-    val shareLink:String?,
+    val shareLink:String? = null,
     @ColumnInfo(name = "is_bookmark")
     val isBookmark: Boolean = false,
     @ColumnInfo(name = "is_like")
     val isLike:Boolean = false,
     val date: Date,
-    val content: List<MarkdownElement>? = null
+    val content: List<MarkdownElement>? = null,
+    val source: String? = null,
+    @Relation(
+        parentColumn = "id",
+        entityColumn = "tag",
+        associateBy = Junction(
+            value = ArticleTagXRef::class,
+            parentColumn = "a_id",
+            entityColumn = "t_id"
+        )
+    )
+    val tags: List<Tag> = emptyList()
+
 )
 
 data class ArticleWithContent(

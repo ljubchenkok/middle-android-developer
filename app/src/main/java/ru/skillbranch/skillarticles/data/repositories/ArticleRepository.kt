@@ -1,15 +1,15 @@
 package ru.skillbranch.skillarticles.data.repositories
 
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
 import androidx.paging.DataSource
 import androidx.paging.ItemKeyedDataSource
 import ru.skillbranch.skillarticles.data.NetworkDataHolder
 import ru.skillbranch.skillarticles.data.local.DbManager.db
 import ru.skillbranch.skillarticles.data.local.PrefManager
+import ru.skillbranch.skillarticles.data.local.dao.*
 import ru.skillbranch.skillarticles.data.local.entities.ArticleFull
-import ru.skillbranch.skillarticles.data.local.entities.ArticlePersonalInfo
 import ru.skillbranch.skillarticles.data.models.*
 import ru.skillbranch.skillarticles.extensions.data.toArticleContent
 import java.lang.Thread.sleep
@@ -34,11 +34,24 @@ interface IArticleRepository {
 object ArticleRepository : IArticleRepository {
     private val network = NetworkDataHolder
     private val preferences = PrefManager
-    private val articlesDao = db.articlesDao()
-    private val articlePersonalDao = db.articlePersonalInfosDao()
-    private val articleCountsDao = db.articleCountsDao()
-    private val articleContentDao = db.articleContentsDao()
+    private var articlesDao = db.articlesDao()
+    private var articlePersonalDao = db.articlePersonalInfosDao()
+    private var articleCountsDao = db.articleCountsDao()
+    private var articleContentDao = db.articleContentsDao()
 
+    @VisibleForTesting(otherwise = VisibleForTesting.NONE)
+    fun setupTestDao(
+        articlesDao: ArticlesDao,
+        articlePersonalDao : ArticlePersonalInfosDao,
+        articleCountsDao: ArticleCountsDao,
+        articleContentDao: ArticleContentsDao
+    ){
+        this.articlesDao = articlesDao
+        this.articlePersonalDao = articlePersonalDao
+        this.articleCountsDao = articleCountsDao
+        this.articleContentDao = articleContentDao
+
+    }
 
     override fun findArticle(articleId: String): LiveData<ArticleFull> {
         return articlesDao.findFullArticle(articleId)
@@ -117,7 +130,7 @@ object ArticleRepository : IArticleRepository {
             answerToSlug,
             User("777", "John Doe", "https://skill-branch.ru/img/mail/bot/android-category.png")
         )
-        articleCountsDao.incrementComments(articleId)
+        articleCountsDao.incrementCommentsCount(articleId)
     }
 
 }

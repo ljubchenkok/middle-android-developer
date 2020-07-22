@@ -22,25 +22,25 @@ interface ArticlesDao:BaseDao<Article> {
     }
 
     @Query("SELECT * FROM ARTICLES")
-    fun findArticles():List<Article>
+    fun findArticles():LiveData<List<Article>>
 
     @Query("SELECT * FROM ARTICLES WHERE ID = :id")
-    fun findArticleById(id:String):Article
+    fun findArticleById(id:String):LiveData<Article>
 
     @Query("SELECT * FROM ARTICLEITEM")
-    fun findArticleItems(): List<ArticleItem>
+    fun findArticleItems(): LiveData<List<ArticleItem>>
 
     @Query("""
         SELECT * FROM ARTICLEITEM WHERE category_id IN (:categoryIds)
     """)
-    fun findArticleItemsByCategoryIds(categoryIds:List<String>):List<ArticleItem>
+    fun findArticleItemsByCategoryIds(categoryIds:List<String>):LiveData<List<ArticleItem>>
 
     @Query("""
         SELECT * FROM ARTICLEITEM
         INNER JOIN article_tag_x_ref as refs ON refs.a_id = id          
         WHERE refs.t_id = :tagId
     """)
-    fun findArticlesBuTagId(tagId:String):List<ArticleItem>
+    fun findArticlesByTagId(tagId:String):LiveData<List<ArticleItem>>
 
     @RawQuery(observedEntities = [ArticleItem::class])
     fun findArticlesByRaw(simpleSQLiteQuery: SimpleSQLiteQuery): DataSource.Factory<Int, ArticleItem>

@@ -1,20 +1,31 @@
 package ru.skillbranch.skillarticles.data.local
 
-import android.content.Context
 import android.content.SharedPreferences
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
+import ru.skillbranch.skillarticles.App
 import ru.skillbranch.skillarticles.data.delegates.PrefDelegate
+import ru.skillbranch.skillarticles.data.models.AppSettings
 
-class PrefManager(context: Context) {
-    internal val preferences: SharedPreferences by lazy { PreferenceManager(context).sharedPreferences }
-    val storedBoolean by PrefDelegate(false)
-    val storedString by PrefDelegate("test")
-    val storedInt by PrefDelegate(Int.MAX_VALUE)
-    val storedLong by PrefDelegate(Long.MAX_VALUE)
-    val storedFloat by PrefDelegate(100f)
-
+object PrefManager {
+    internal val preferences: SharedPreferences by lazy {
+        PreferenceManager.getDefaultSharedPreferences(App.applicationContext())
+    }
 
 
     fun clearAll() = preferences.edit().clear().apply()
+    fun isAuth(): MutableLiveData<Boolean> {
+        return MutableLiveData(false)
+
+    }
+
+    fun getAppSettings(): LiveData<AppSettings> {
+        return MutableLiveData(AppSettings())
+    }
+
+    fun setAuth(isAuth: Boolean):Unit {
+
+    }
 
 }

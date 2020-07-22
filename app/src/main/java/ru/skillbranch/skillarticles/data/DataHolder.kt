@@ -6,6 +6,7 @@ import ru.skillbranch.skillarticles.data.models.CommentItemData
 import ru.skillbranch.skillarticles.data.models.User
 import ru.skillbranch.skillarticles.data.remote.res.ArticleContentRes
 import ru.skillbranch.skillarticles.data.remote.res.ArticleRes
+import ru.skillbranch.skillarticles.extensions.data.toArticleContentRes
 import java.lang.Thread.sleep
 import java.util.*
 import kotlin.math.abs
@@ -78,13 +79,7 @@ object NetworkDataHolder {
     }
 }
 
-private fun ArticleData.toArticleContentRes(): ArticleContentRes = ArticleContentRes(
-    articleId = id,
-    content = content,
-    source = source,
-    shareLink = shareLink,
-    updatedAt = Date()
-)
+
 
 
 

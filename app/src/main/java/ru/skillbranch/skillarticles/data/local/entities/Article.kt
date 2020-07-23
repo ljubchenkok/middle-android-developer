@@ -85,7 +85,7 @@ data class ArticleFull(
     val author: Author,
     @Embedded(prefix = "category_")
     val category: Category,
-    @ColumnInfo(name = "shared_link")
+    @ColumnInfo(name = "share_link")
     val shareLink:String? = null,
     @ColumnInfo(name = "is_bookmark")
     val isBookmark: Boolean = false,

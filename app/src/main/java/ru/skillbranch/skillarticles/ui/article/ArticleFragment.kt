@@ -406,10 +406,11 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
         private var tags: List<String> by RenderProp(emptyList()) {list->
             tv_hashtags.isVisible = list.isNotEmpty()
             val spanned = buildSpannedString {
-                list.forEach {
+                list.forEachIndexed { index, s ->
                     inSpans(InlineCodeSpan(colorOnSurface, opacityColorSurface, cornerRadius, gap)) {
-                        append(it)
+                        append(s)
                     }
+                    if(index < list.size - 1) append(" ")
                 }
             }
             tv_hashtags.setText(spanned, TextView.BufferType.SPANNABLE)

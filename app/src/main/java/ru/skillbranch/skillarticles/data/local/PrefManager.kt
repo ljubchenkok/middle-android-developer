@@ -17,7 +17,6 @@ object PrefManager {
 
     private var isDarkMode by PrefDelegate(false)
     private var isBigText by PrefDelegate(false)
-    private var isAuth by PrefDelegate(false)
     private var appSettingsLiveData = MutableLiveData(AppSettings(isDarkMode ?: false, isBigText ?: false))
     private var isAuthLiveData = MutableLiveData(false)
 
@@ -30,7 +29,6 @@ object PrefManager {
 
     @UiThread
     fun setAuth(auth: Boolean) {
-        isAuth = auth
         isAuthLiveData.value = auth
     }
 

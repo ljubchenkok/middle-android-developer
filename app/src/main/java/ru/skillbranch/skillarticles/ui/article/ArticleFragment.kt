@@ -410,9 +410,7 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
                     inSpans(InlineCodeSpan(colorOnSurface, opacityColorSurface, cornerRadius, gap)) {
                         append(it)
                     }
-                    append(" ")
                 }
-                trimEnd()
             }
             tv_hashtags.setText(spanned, TextView.BufferType.SPANNABLE)
         }

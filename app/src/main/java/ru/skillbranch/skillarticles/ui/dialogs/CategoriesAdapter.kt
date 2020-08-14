@@ -13,28 +13,27 @@ import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.data.local.entities.CategoryData
 import ru.skillbranch.skillarticles.extensions.dpToIntPx
 
-class CategoriesAdapter(private val listener: (CategoryData, Boolean) -> Unit) : ListAdapter<Pair<CategoryData, Boolean>, CategoryViewHolder>(CategoryCallback()){
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_category, parent, false)
-        return CategoryViewHolder(view)
-    }
+class CategoriesAdapter(private val listener: (String, Boolean) -> Unit) :
+    ListAdapter<CategoryDataItem, CategoryViewHolder>(CategoryDiffCallback()){
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder = CategoryViewHolder(
+        LayoutInflater.from(parent.context).inflate(R.layout.item_category, parent, false),
+        listener
+
+    )
 
     override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
-        val item = getItem(position)
-        holder.bind(item.first, item.second, listener)
+        holder.bind(getItem(position))
     }
 
 }
 
-class CategoryViewHolder  (override val containerView: View) : RecyclerView.ViewHolder(containerView),
-    LayoutContainer {
+class CategoryViewHolder  (override val containerView: View, val listener: (String, Boolean) -> Unit ) :
+    RecyclerView.ViewHolder(containerView), LayoutContainer {
     private val categorySize = containerView.context.dpToIntPx(40)
 
-    fun bind(item: CategoryData, checked: Boolean, listener: (CategoryData, Boolean) -> Unit) {
-        containerView.ch_select.isChecked = checked
-        containerView.ch_select.setOnCheckedChangeListener { _, isChecked ->
-            listener(item, isChecked)
-        }
+    fun bind(item: CategoryDataItem) {
+        containerView.ch_select.setOnCheckedChangeListener(null)
+        containerView.ch_select.isChecked = item.isChecked
 
         Glide.with(containerView.context)
             .load(item.icon)
@@ -45,6 +44,9 @@ class CategoryViewHolder  (override val containerView: View) : RecyclerView.View
         containerView.tv_category.text = item.title
         containerView.tv_count.text = "${item.articlesCount}"
 
+        containerView.ch_select.setOnCheckedChangeListener { _, isChecked ->
+            listener(item.categoryId, isChecked)
+        }
         itemView.setOnClickListener {
             containerView.ch_select.isChecked = !containerView.ch_select.isChecked
         }
@@ -52,10 +54,21 @@ class CategoryViewHolder  (override val containerView: View) : RecyclerView.View
 
 }
 
-class CategoryCallback : DiffUtil.ItemCallback<Pair<CategoryData, Boolean>>() {
-    override fun areItemsTheSame(oldItem: Pair<CategoryData, Boolean>, newItem: Pair<CategoryData, Boolean>) =
-        oldItem.first.categoryId == newItem.first.categoryId
+class CategoryDiffCallback : DiffUtil.ItemCallback<CategoryDataItem>() {
+    override fun areItemsTheSame(oldItem: CategoryDataItem, newItem: CategoryDataItem) =
+        oldItem.categoryId == newItem.categoryId
 
-    override fun areContentsTheSame(oldItem: Pair<CategoryData, Boolean>, newItem: Pair<CategoryData, Boolean>) =
+    override fun areContentsTheSame(oldItem: CategoryDataItem, newItem: CategoryDataItem) =
         oldItem == newItem
 }
+
+
+data class CategoryDataItem(
+    val categoryId: String,
+    val icon: String,
+    val title: String,
+    val articlesCount: Int = 0,
+    val isChecked: Boolean = false
+)
+
+fun CategoryData.toItem(checked: Boolean = false) = CategoryDataItem(categoryId, icon, title, articlesCount, checked)

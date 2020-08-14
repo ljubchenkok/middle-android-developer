@@ -3,10 +3,13 @@ package ru.skillbranch.skillarticles.data.local
 import android.content.SharedPreferences
 import androidx.annotation.UiThread
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.distinctUntilChanged
 import androidx.preference.PreferenceManager
 import ru.skillbranch.skillarticles.App
 import ru.skillbranch.skillarticles.data.delegates.PrefDelegate
+import ru.skillbranch.skillarticles.data.delegates.PrefLiveDelegate
 import ru.skillbranch.skillarticles.data.models.AppSettings
 
 object PrefManager {
@@ -15,27 +18,28 @@ object PrefManager {
         PreferenceManager.getDefaultSharedPreferences(App.applicationContext())
     }
 
-    private var isDarkMode by PrefDelegate(false)
-    private var isBigText by PrefDelegate(false)
-    private var appSettingsLiveData = MutableLiveData(AppSettings(isDarkMode ?: false, isBigText ?: false))
-    private var isAuthLiveData = MutableLiveData(false)
+    var isDarkMode by PrefDelegate(false)
+    var isBigText by PrefDelegate(false)
+    var isAuth by PrefDelegate(false)
+
+    val isAuthLive: LiveData<Boolean> by PrefLiveDelegate("isAuth", false, preferences)
+
+    var appSettings = MediatorLiveData<AppSettings>().apply {
+        val isDarkModeLive: LiveData<Boolean> by PrefLiveDelegate("isDarkMode", false, preferences)
+        val isBigTextLive: LiveData<Boolean> by PrefLiveDelegate("isBigText", false, preferences)
+        value = AppSettings()
+
+        addSource(isDarkModeLive){
+            value = value!!.copy(isDarkMode = it)
+        }
+
+        addSource(isBigTextLive){
+            value = value!!.copy(isBigText = it)
+        }
+    }.distinctUntilChanged()
+
 
     fun clearAll(){
         preferences.edit().clear().apply()
-    }
-
-    fun isAuth(): LiveData<Boolean> = isAuthLiveData
-    fun getAppSettings(): LiveData<AppSettings> = appSettingsLiveData
-
-    @UiThread
-    fun setAuth(auth: Boolean) {
-        isAuthLiveData.value = auth
-    }
-
-    @UiThread
-    fun updateAppSettings(appSettings: AppSettings) {
-        isDarkMode = appSettings.isDarkMode
-        isBigText = appSettings.isBigText
-        appSettingsLiveData.value = appSettings
     }
 }

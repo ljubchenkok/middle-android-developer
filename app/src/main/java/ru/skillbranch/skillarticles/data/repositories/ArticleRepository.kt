@@ -57,7 +57,7 @@ object ArticleRepository : IArticleRepository {
         return articlesDao.findFullArticle(articleId)
     }
 
-    override fun getAppSettings(): LiveData<AppSettings> = preferences.getAppSettings()
+    override fun getAppSettings(): LiveData<AppSettings> = preferences.appSettings
 
     override fun toggleLike(articleId: String) {
         articlePersonalDao.toggleLikeOrInsert(articleId)
@@ -73,7 +73,8 @@ object ArticleRepository : IArticleRepository {
     }
 
     override fun updateSettings(appSettings: AppSettings) {
-        preferences.updateAppSettings(appSettings)
+        preferences.isBigText = appSettings.isBigText
+        preferences.isDarkMode = appSettings.isDarkMode
     }
 
     override fun fetchArticleContent(articleId: String) {
@@ -85,7 +86,7 @@ object ArticleRepository : IArticleRepository {
         return articleCountsDao.getCommentsCount(articleId)
     }
 
-    override fun isAuth(): LiveData<Boolean> = preferences.isAuth()
+    override fun isAuth(): LiveData<Boolean> = preferences.isAuthLive
 
     override fun loadAllComments(articleId: String, totalCount: Int) =
         CommentDataFactory(

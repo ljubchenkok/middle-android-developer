@@ -10,74 +10,69 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_chose_category_dialog.*
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.viewmodels.articles.ArticlesViewModel
 
 
-class ChoseCategoryDialog : DialogFragment()  {
-    private val viewModel : ArticlesViewModel by activityViewModels()
-    private val args : ChoseCategoryDialogArgs by navArgs()
+class ChoseCategoryDialog : DialogFragment() {
+    private val viewModel: ArticlesViewModel by activityViewModels()
+    private val args: ChoseCategoryDialogArgs by navArgs()
     private val categories by lazy { args.categories }
-    private val selectedCategories = mutableSetOf<String>()
-    private var customView: View? = null
+    private val selected = mutableSetOf<String>()
+    private var listView: View? = null
 
-    private val layout = R.layout.fragment_chose_category_dialog
-    private val categoriesAdapter = CategoriesAdapter {category, isChecked ->
-        if(isChecked)selectedCategories.add(category.categoryId)
-        else selectedCategories.remove(category.categoryId)
+    private val categoriesAdapter = CategoriesAdapter { categoryId: String, isChecked: Boolean ->
+        if (isChecked) selected.add(categoryId)
+        else selected.remove(categoryId)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        selectedCategories.addAll(args.selectedCategories)
-        val adb =AlertDialog.Builder(requireContext())
-            .setTitle("Chose category")
-            .setPositiveButton("Apply"){_, _ ->
-                viewModel.applyCategories(selectedCategories.toList())
-            }
-            .setNegativeButton("Reset"){_,_ ->
-                viewModel.applyCategories(emptyList())
-            }
-        customView = activity?.layoutInflater?.inflate(layout, null)
-        adb.setView(customView)
-        return adb.create()
-    }
+        selected.clear()
+        selected.addAll(savedInstanceState?.getStringArray("checked") ?: args.selectedCategories)
+        val categoryItems = args.categories.map { it.toItem(selected.contains(it.categoryId)) }
+        categoriesAdapter.submitList(
+            categoryItems
+        )
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return customView ?: super.onCreateView(inflater, container, savedInstanceState)
+        listView =
+            layoutInflater.inflate(R.layout.fragment_chose_category_dialog, null) as RecyclerView
 
-    }
-
-
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        with(categories_list) {
+        with(listView as RecyclerView) {
             layoutManager = LinearLayoutManager(context)
             adapter = categoriesAdapter
         }
 
+        return AlertDialog.Builder(requireContext())
+            .setTitle("Chose category")
+            .setPositiveButton("Apply") { _, _ ->
+                viewModel.applyCategories(selected.toList())
+            }
+            .setNegativeButton("Reset") { _, _ ->
+                viewModel.applyCategories(emptyList())
+            }
+            .setView(listView)
+            .create()
     }
+
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
-        val saved = savedInstanceState?.getStringArray(::ChoseCategoryDialog.name)
-        if(saved != null) {
-            selectedCategories.clear()
-            selectedCategories.addAll(saved)
+        val saved = savedInstanceState?.getStringArray("checked")
+        if (saved != null) {
+            selected.clear()
+            selected.addAll(saved)
         }
-        categoriesAdapter.submitList(categories.map {it to selectedCategories.contains(it.categoryId)})
+        val categoryItems = args.categories.map { it.toItem(selected.contains(it.categoryId)) }
+        categoriesAdapter.submitList(categoryItems)
 
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putStringArray(::ChoseCategoryDialog.name,selectedCategories.toTypedArray())
+        outState.putStringArray("checked", selected.toTypedArray())
         super.onSaveInstanceState(outState)
     }
-
 
 
 }

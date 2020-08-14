@@ -55,7 +55,7 @@ class ArticleViewModel(
                 isLike = article.isLike,
                 content = article.content ?: emptyList(),
                 isLoadingContent = article.content == null,
-                tags = article.tags.map { it.tag },
+                tags = article.tags,
                 source = article.source
             )
 

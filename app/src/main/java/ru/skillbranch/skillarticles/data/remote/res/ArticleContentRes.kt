@@ -8,6 +8,6 @@ data class ArticleContentRes(
     val articleId:String,
     val content:String,
     val source:String?=null,
-    val shareLink:String,
+    val shareLink:String?,
     val updatedAt: Date = Date()
 )

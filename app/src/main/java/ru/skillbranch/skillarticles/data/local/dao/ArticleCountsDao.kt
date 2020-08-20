@@ -27,7 +27,6 @@ interface ArticleCountsDao:BaseDao<ArticleCounts> {
     """)
     fun findArticleCounts(articleId: String): LiveData<ArticleCounts>
 
-//    fun incrementLikeOrInsert(articleId: String)
 
     @Query("""
         UPDATE article_counts SET likes = likes + 1, updated_at = CURRENT_TIMESTAMP
@@ -69,5 +68,8 @@ interface ArticleCountsDao:BaseDao<ArticleCounts> {
         WHERE article_id = :articleId
     """)
     suspend fun updateCommentsCount(articleId: String, counts: Int)
+
+    @Query("SELECT * FROM article_counts WHERE article_id = :articleId")
+    suspend fun findArticlesCountsTest(articleId:String) : ArticleCounts
 
 }

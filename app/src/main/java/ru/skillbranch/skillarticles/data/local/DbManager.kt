@@ -37,7 +37,7 @@ object DbManager {
 abstract class AppDb : RoomDatabase() {
     companion object {
         const val DATABES_NAME: String = BuildConfig.APPLICATION_ID + ".db"
-        const val DATABES_VERSION = 10
+        const val DATABES_VERSION = 11
     }
 
     abstract fun articlesDao(): ArticlesDao

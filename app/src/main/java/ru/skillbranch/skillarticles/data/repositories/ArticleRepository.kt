@@ -73,6 +73,15 @@ object ArticleRepository : IArticleRepository {
         articlePersonalDao.toggleBookmarkOrInsert(articleId)
     }
 
+    fun addBookmark(articleId: String){
+        articlePersonalDao.addBookmark(articleId)
+    }
+
+    fun removeBookmark(articleId: String){
+        articlePersonalDao.removeBookmark(articleId)
+    }
+
+
     override fun updateSettings(appSettings: AppSettings) {
         preferences.isBigText = appSettings.isBigText
         preferences.isDarkMode = appSettings.isDarkMode
@@ -155,6 +164,7 @@ object ArticleRepository : IArticleRepository {
         articleCountsDao.updateCommentsCount(articleId, counts.comments)
 
     }
+
 
 }
 

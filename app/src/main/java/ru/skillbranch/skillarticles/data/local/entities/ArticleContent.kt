@@ -23,7 +23,7 @@ data class ArticleContent(
     val content: String,
     val source: String? = null,
     @ColumnInfo(name = "share_link")
-    val shareLink: String,
+    val shareLink: String?,
     @ColumnInfo(name = "updated_at")
     val updetedAt: Date = Date()
 

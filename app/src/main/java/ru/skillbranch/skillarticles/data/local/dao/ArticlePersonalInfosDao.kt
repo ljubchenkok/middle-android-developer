@@ -32,6 +32,18 @@ interface ArticlePersonalInfosDao:BaseDao<ArticlePersonalInfo> {
     fun toggleBookmark(articleId:String):Int
 
     @Query("""
+        UPDATE article_personal_info SET is_bookmark = 1, updated_at = CURRENT_TIMESTAMP
+         WHERE article_id = :articleId
+    """)
+    fun addBookmark(articleId:String):Int
+
+    @Query("""
+        UPDATE article_personal_info SET is_bookmark = 0, updated_at = CURRENT_TIMESTAMP
+         WHERE article_id = :articleId
+    """)
+    fun removeBookmark(articleId:String):Int
+
+    @Query("""
         SELECT is_bookmark FROM article_personal_info WHERE article_id = :articleId
     """)
     suspend fun isBookmarked(articleId:String):Boolean
@@ -59,6 +71,9 @@ interface ArticlePersonalInfosDao:BaseDao<ArticlePersonalInfo> {
     """)
     fun findPersonalInfos(articleId: String): LiveData<ArticlePersonalInfo>
 
+
+    @Query("SELECT * FROM article_personal_info WHERE article_id = :articleId")
+    suspend fun findPersonalInfosTest(articleId: String): ArticlePersonalInfo
 
 
 

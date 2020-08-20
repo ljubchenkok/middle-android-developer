@@ -10,7 +10,7 @@ data class User(
     val avatar: String,
     val rating:Int = 0,
     val respect:Int = 0,
-    val about: String =""
-//    val lastVisit: Date = Date(),
+    val about: String ="",
+    val lastVisit: Date = Date()
 //    val contacts: Map<String, String> = mapOf()
 )

@@ -12,7 +12,7 @@ import ru.skillbranch.skillarticles.data.local.entities.CategoryWithArticles
 @Dao
 interface CategoriesDao : BaseDao<Category> {
     @Transaction
-    fun upsert(list: List<Category>){
+    suspend fun upsert(list: List<Category>){
         insert(list).mapIndexed {index, recordResult ->
             if(recordResult == -1L) list[index] else null
         }.filterNotNull().also{

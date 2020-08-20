@@ -11,7 +11,7 @@ import ru.skillbranch.skillarticles.data.local.entities.ArticlePersonalInfo
 interface ArticlePersonalInfosDao:BaseDao<ArticlePersonalInfo> {
 
     @Transaction
-    fun upsert(list: List<ArticlePersonalInfo>){
+    suspend fun upsert(list: List<ArticlePersonalInfo>){
         insert(list).mapIndexed {index, recordResult ->  if(recordResult == -1L) list[index] else null }
             .filterNotNull().also{
             if(it.isNotEmpty()) update(it)
@@ -23,7 +23,7 @@ interface ArticlePersonalInfosDao:BaseDao<ArticlePersonalInfo> {
         UPDATE article_personal_info SET is_like = NOT is_like, updated_at = CURRENT_TIMESTAMP 
         WHERE article_id = :articleId
     """)
-    fun toggleLike(articleId:String):Int
+    suspend fun toggleLike(articleId:String):Int
 
     @Query("""
         UPDATE article_personal_info SET is_bookmark = NOT is_bookmark, updated_at = CURRENT_TIMESTAMP
@@ -31,13 +31,21 @@ interface ArticlePersonalInfosDao:BaseDao<ArticlePersonalInfo> {
     """)
     fun toggleBookmark(articleId:String):Int
 
+    @Query("""
+        SELECT is_bookmark FROM article_personal_info WHERE article_id = :articleId
+    """)
+    suspend fun isBookmarked(articleId:String):Boolean
+
+
+
     @Transaction
-    fun toggleBookmarkOrInsert(articleId:String){
+    suspend fun toggleBookmarkOrInsert(articleId:String) : Boolean{
         if(toggleBookmark(articleId) == 0) insert(ArticlePersonalInfo(articleId = articleId, isBookmark = true))
+        return isBookmarked(articleId)
     }
 
     @Transaction
-    fun toggleLikeOrInsert(articleId:String){
+    suspend fun toggleLikeOrInsert(articleId:String){
         if(toggleLike(articleId) == 0) insert(ArticlePersonalInfo(articleId = articleId, isLike = true))
     }
 

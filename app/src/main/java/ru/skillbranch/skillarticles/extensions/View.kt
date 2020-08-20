@@ -1,21 +1,31 @@
 package ru.skillbranch.skillarticles.extensions
 
 import android.view.View
+import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.RelativeLayout
+import androidx.core.view.marginBottom
+import androidx.core.view.marginLeft
+import androidx.core.view.marginRight
+import androidx.core.view.marginTop
 import androidx.core.widget.NestedScrollView
 import androidx.navigation.NavDestination
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-fun NestedScrollView.setMarginOptionally(
-    left: Int = -1,
-    top: Int = -1,
-    right: Int = -1,
-    bottom: Int = -1
+fun View.setMarginOptionally(
+    left: Int = marginLeft,
+    top: Int = marginTop,
+    right: Int = marginRight,
+    bottom: Int = marginBottom
 ) {
-    if (bottom >= 0) (layoutParams as FrameLayout.LayoutParams).bottomMargin = bottom
-    if (left >= 0) (layoutParams as FrameLayout.LayoutParams).leftMargin = left
-    if (top >= 0) (layoutParams as FrameLayout.LayoutParams).topMargin = top
-    if (right >= 0) (layoutParams as FrameLayout.LayoutParams).rightMargin = right
+
+    (layoutParams as? ViewGroup.MarginLayoutParams)?.run {
+        leftMargin = left
+        topMargin= top
+        rightMargin = right
+        bottomMargin = bottom
+
+    }
 
 }
 

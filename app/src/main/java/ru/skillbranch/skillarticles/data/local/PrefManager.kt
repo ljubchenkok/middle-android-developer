@@ -2,17 +2,21 @@ package ru.skillbranch.skillarticles.data.local
 
 import android.content.SharedPreferences
 import androidx.annotation.UiThread
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.distinctUntilChanged
+import androidx.lifecycle.*
 import androidx.preference.PreferenceManager
 import ru.skillbranch.skillarticles.App
+import ru.skillbranch.skillarticles.data.JsonConverter.moshi
 import ru.skillbranch.skillarticles.data.delegates.PrefDelegate
 import ru.skillbranch.skillarticles.data.delegates.PrefLiveDelegate
+import ru.skillbranch.skillarticles.data.delegates.PrefLiveObjDelegate
+import ru.skillbranch.skillarticles.data.delegates.PrefObjDelegate
 import ru.skillbranch.skillarticles.data.models.AppSettings
+import ru.skillbranch.skillarticles.data.models.User
 
 object PrefManager {
+
+    var refreshToken by PrefDelegate("")
+    var accessToken by PrefDelegate("")
 
     internal val preferences : SharedPreferences by lazy {
         PreferenceManager.getDefaultSharedPreferences(App.applicationContext())
@@ -22,7 +26,13 @@ object PrefManager {
     var isBigText by PrefDelegate(false)
     var isAuth by PrefDelegate(false)
 
-    val isAuthLive: LiveData<Boolean> by PrefLiveDelegate("isAuth", false, preferences)
+    var profile: User? by PrefObjDelegate(moshi.adapter(User::class.java))
+
+    val isAuthLive: LiveData<Boolean> by lazy {
+        val token by PrefLiveDelegate("accessToken", "", preferences)
+        token.map { it.isNotEmpty() }
+    }
+    val profileLive: LiveData<User?> by PrefLiveObjDelegate("profile", moshi.adapter(User::class.java), preferences)
 
     var appSettings = MediatorLiveData<AppSettings>().apply {
         val isDarkModeLive: LiveData<Boolean> by PrefLiveDelegate("isDarkMode", false, preferences)

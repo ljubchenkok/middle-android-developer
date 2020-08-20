@@ -21,7 +21,7 @@ interface TagsDao:BaseDao<Tag> {
         UPDATE article_tag SET use_count = use_count + 1 
         WHERE tag = :tag
     """)
-    fun incrementTagUseCount(tag:String)
+    suspend fun incrementTagUseCount(tag:String)
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertRefs(refs: List<ArticleTagXRef>):List<Long>
+    suspend fun insertRefs(refs: List<ArticleTagXRef>):List<Long>
 }

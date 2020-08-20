@@ -13,7 +13,7 @@ import ru.skillbranch.skillarticles.data.local.entities.ArticleWithShareLink
 interface ArticlesDao:BaseDao<Article> {
 
     @Transaction
-    fun upsert(list: List<Article>){
+    suspend fun upsert(list: List<Article>){
         insert(list).mapIndexed {index, recordResult ->
             if(recordResult == -1L) list[index] else null
         }.filterNotNull().also{
@@ -55,4 +55,8 @@ interface ArticlesDao:BaseDao<Article> {
     """)
     fun findArticleWithShareLink(articleId:String):ArticleWithShareLink
 
+    @Query("""
+        SELECT id FROM ARTICLES ORDER BY DATE LIMIT 1
+    """)
+    suspend fun findLastArticleId(): String?
 }

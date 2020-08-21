@@ -2,16 +2,13 @@ package ru.skillbranch.skillarticles.ui.dialogs
 
 import android.app.Dialog
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.fragment_chose_category_dialog.*
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.viewmodels.articles.ArticlesViewModel
 
@@ -23,7 +20,7 @@ class ChoseCategoryDialog : DialogFragment() {
     private val selected = mutableSetOf<String>()
     private var listView: View? = null
 
-    private val categoriesAdapter = CategoriesAdapter { categoryId: String, isChecked: Boolean ->
+    private val categoriesAdapter = CategoryAdapter { categoryId: String, isChecked: Boolean ->
         if (isChecked) selected.add(categoryId)
         else selected.remove(categoryId)
     }

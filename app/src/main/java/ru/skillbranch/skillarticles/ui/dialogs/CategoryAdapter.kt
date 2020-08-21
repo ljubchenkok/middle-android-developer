@@ -13,7 +13,7 @@ import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.data.local.entities.CategoryData
 import ru.skillbranch.skillarticles.extensions.dpToIntPx
 
-class CategoriesAdapter(private val listener: (String, Boolean) -> Unit) :
+class CategoryAdapter(private val listener: (String, Boolean) -> Unit) :
     ListAdapter<CategoryDataItem, CategoryViewHolder>(CategoryDiffCallback()){
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder = CategoryViewHolder(
         LayoutInflater.from(parent.context).inflate(R.layout.item_category, parent, false),

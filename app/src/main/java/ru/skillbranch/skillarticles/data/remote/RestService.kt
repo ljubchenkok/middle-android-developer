@@ -14,6 +14,11 @@ interface RestService {
         @Query("limit") limit: Int = 10
     ): List<ArticleRes>
 
+    @GET("articles")
+    suspend fun articles(
+        @Query("limit") limit: Int = 10
+    ): List<ArticleRes>
+
     @GET("articles/{article}/content")
     suspend fun loadArticleContent(@Path("article") articleId: String): ArticleContentRes
 

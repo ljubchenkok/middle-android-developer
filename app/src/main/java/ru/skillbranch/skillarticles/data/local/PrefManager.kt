@@ -15,16 +15,14 @@ import ru.skillbranch.skillarticles.data.models.User
 
 object PrefManager {
 
-    var refreshToken by PrefDelegate("")
-    var accessToken by PrefDelegate("")
-
     internal val preferences : SharedPreferences by lazy {
         PreferenceManager.getDefaultSharedPreferences(App.applicationContext())
     }
 
     var isDarkMode by PrefDelegate(false)
     var isBigText by PrefDelegate(false)
-    var isAuth by PrefDelegate(false)
+    var refreshToken by PrefDelegate("")
+    var accessToken by PrefDelegate("")
 
     var profile: User? by PrefObjDelegate(moshi.adapter(User::class.java))
 

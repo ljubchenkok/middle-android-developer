@@ -10,12 +10,7 @@ import ru.skillbranch.skillarticles.data.remote.res.*
 interface RestService {
     @GET("articles")
     suspend fun articles(
-        @Query("start") last: String,
-        @Query("limit") limit: Int = 10
-    ): List<ArticleRes>
-
-    @GET("articles")
-    suspend fun articles(
+        @Query("last") last: String? = null,
         @Query("limit") limit: Int = 10
     ): List<ArticleRes>
 

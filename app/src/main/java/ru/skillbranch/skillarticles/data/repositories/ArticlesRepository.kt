@@ -71,7 +71,8 @@ object ArticlesRepository : IArticlesRepository {
     }
 
     override suspend fun loadArticlesFromNetwork(start: String?, size: Int): Int {
-        val items = network.articles(start.toString(), size)
+        val items = if(start != null)  network.articles(start.toString(), size)
+        else network.articles(limit = size)
         if (items.isNotEmpty()) insertArticlesToDb(items)
         return items.size
     }

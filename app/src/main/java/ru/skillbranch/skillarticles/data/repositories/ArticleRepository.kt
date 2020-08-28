@@ -73,12 +73,36 @@ object ArticleRepository : IArticleRepository {
         articlePersonalDao.toggleBookmarkOrInsert(articleId)
     }
 
-    fun addBookmark(articleId: String){
+    suspend fun addBookmark(articleId: String){
         articlePersonalDao.addBookmark(articleId)
+        if (preferences.accessToken.isEmpty()) {
+            return
+        }
+        try {
+            network.addBookmark(articleId, preferences.accessToken)
+
+        } catch (e: Throwable) {
+            if (e is NoNetworkError) {
+                return
+            }
+            throw e
+        }
     }
 
-    fun removeBookmark(articleId: String){
+    suspend fun removeBookmark(articleId: String){
         articlePersonalDao.removeBookmark(articleId)
+        if (preferences.accessToken.isEmpty()) {
+            return
+        }
+        try {
+            network.removeBookmark(articleId, preferences.accessToken)
+
+        } catch (e: Throwable) {
+            if (e is NoNetworkError) {
+                return
+            }
+            throw e
+        }
     }
 
 
@@ -125,7 +149,6 @@ object ArticleRepository : IArticleRepository {
             }
             throw e
         }
-
     }
 
     override suspend fun incrementLike(articleId: String) {

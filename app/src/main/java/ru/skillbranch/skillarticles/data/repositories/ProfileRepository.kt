@@ -21,4 +21,8 @@ object ProfileRepository {
         val (url) =  network.remove(prefs.accessToken)
         prefs.replaceAvatarUrl(url)
     }
+
+    suspend fun editProfile(name: String, about: String){
+        prefs.profile = prefs.profile!!.copy(name = name, about = about)
+    }
 }

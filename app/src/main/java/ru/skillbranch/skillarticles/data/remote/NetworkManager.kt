@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit
 object NetworkManager {
     val api: RestService by lazy {
         val logging = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
+            level = HttpLoggingInterceptor.Level.HEADERS
         }
 
         val client = OkHttpClient().newBuilder()

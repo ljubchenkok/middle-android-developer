@@ -20,15 +20,16 @@ class TokenAuthenticator : Authenticator {
     private val network = NetworkManager
 
     override fun authenticate(route: Route?, response: Response): Request? {
+        if (response.code != 401) return null
         val refreshToken = preferences.refreshToken
         val auth = network.api.refreshToken(RefreshReq(refreshToken)).execute()
+        if(!auth.isSuccessful) return null
         val result = auth.body() ?: return response.request
         preferences.accessToken = "Bearer ${result.accessToken}"
         preferences.refreshToken = result.refreshToken
         return response.request.newBuilder()
             .header("Authorization", "Bearer ${result.accessToken}")
             .build()
-
     }
 
 }

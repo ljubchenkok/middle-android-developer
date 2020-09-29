@@ -100,27 +100,31 @@ class ArticleViewModel(
     }
 
     override fun handleBookmark() {
-        val message = if (!currentState.isBookmark) "Add to bookmarks" else "Remove rom bookmarks"
-        launchSafety (null, {notify(Notify.TextMessage(message))}) {
-            repository.toggleBookmark(articleId)
+        launchSafety {
+            val isBookmarked = repository.toggleBookmark(articleId)
+            if (isBookmarked) repository.addBookmark(articleId)
+            else repository.removeBookmark(articleId)
+            val message =
+                if (!currentState.isBookmark) "Add to bookmarks" else "Remove rom bookmarks"
+            notify(Notify.TextMessage(message))
+
         }
     }
 
     override fun handleLike() {
-        val isLike = currentState.isLike
-        val message = if (!isLike) Notify.TextMessage("Mark is liked")
-        else {
-            Notify.ActionMessage(
-                message = "Don`t like it anymore",
-                actionLabel = "No, still like it"
-            ) {
-                handleLike()
+        launchSafety {
+            val isLiked = repository.toggleLike(articleId)
+            if (isLiked) repository.incrementLike(articleId)
+            else repository.decrementLike(articleId)
+            val message = if (!isLiked) Notify.TextMessage("Mark is liked")
+            else {
+                Notify.ActionMessage(
+                    "Don`t like it anymore",
+                    "No, still like it"
+                ) { handleLike()}
             }
-        }
-        launchSafety(null, { notify((message)) }) {
-            repository.toggleLike(articleId)
-            if (isLike) repository.decrementLike(articleId)
-            else repository.incrementLike(articleId)
+            notify(message)
+
         }
 
     }

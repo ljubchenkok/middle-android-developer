@@ -21,18 +21,18 @@ interface IArticleRepository {
     fun findArticle(articleId: String): LiveData<ArticleFull>
     fun getAppSettings(): LiveData<AppSettings>
     suspend fun toggleLike(articleId: String): Boolean
-    suspend fun toggleBookmark(articleId: String)
+    suspend fun toggleBookmark(articleId: String):  Boolean
     fun isAuth(): LiveData<Boolean>
-    suspend fun sendMessage(articleId: String, text: String, answerToSlug: String?)
+    suspend fun sendMessage(articleId: String, message: String, answerToMessageId: String?)
     fun loadAllComments(
         articleId: String,
-        total: Int,
+        totalCount: Int,
         errHandler: (Throwable) -> Unit
     ): CommentDataFactory
 
     suspend fun decrementLike(articleId: String)
     suspend fun incrementLike(articleId: String)
-    fun updateSettings(copy: AppSettings)
+    fun updateSettings(appSettings: AppSettings)
     suspend fun fetchArticleContent(articleId: String)
     fun findArticleCommentCount(articleId: String): LiveData<Int>
 }
@@ -69,8 +69,8 @@ object ArticleRepository : IArticleRepository {
         return articlePersonalDao.toggleLikeOrInsert(articleId)
     }
 
-    override suspend fun toggleBookmark(articleId: String) {
-        articlePersonalDao.toggleBookmarkOrInsert(articleId)
+    override suspend fun toggleBookmark(articleId: String) : Boolean {
+        return articlePersonalDao.toggleBookmarkOrInsert(articleId)
     }
 
     suspend fun addBookmark(articleId: String){

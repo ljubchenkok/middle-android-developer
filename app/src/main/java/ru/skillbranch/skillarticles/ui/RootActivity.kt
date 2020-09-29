@@ -27,6 +27,7 @@ class RootActivity : BaseActivity<RootViewModel>() {
     public override val viewModel: RootViewModel by viewModels()
 
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val appBarConfiguration = AppBarConfiguration(

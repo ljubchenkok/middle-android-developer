@@ -109,6 +109,9 @@ class ProfileViewModel(handle: SavedStateHandle) :
     }
 
     fun handleDeleteAction() {
+        launchSafety {
+            repository.removeAvatar()
+        }
     }
 
     fun handleGalleryAction() {

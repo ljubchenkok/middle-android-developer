@@ -16,4 +16,9 @@ object ProfileRepository {
         val (url) =  network.upload(body, prefs.accessToken)
         prefs.replaceAvatarUrl(url)
     }
+
+    suspend fun removeAvatar() {
+        val (url) =  network.remove(prefs.accessToken)
+        prefs.replaceAvatarUrl(url)
+    }
 }

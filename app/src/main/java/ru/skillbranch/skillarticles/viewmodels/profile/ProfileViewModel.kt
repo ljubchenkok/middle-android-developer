@@ -121,6 +121,7 @@ class ProfileViewModel(handle: SavedStateHandle) :
         updateState { it.copy(pendingAction = PendingAction.CameraAction(destination)) }
         requestPermissions(storagePermissions)
     }
+
 }
 
 data class ProfileState(

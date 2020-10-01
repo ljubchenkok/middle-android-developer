@@ -87,6 +87,12 @@ abstract class BaseActivity<T : BaseViewModel<out IViewModelState>> : AppCompatA
                     bundleOf("private_destination" to (command.privateDestination ?: -1))
                 )
             }
+            is NavigationCommand.StartRegistration -> {
+                navController.navigate(
+                    R.id.start_registration,
+                    bundleOf("private_destination" to (command.privateDestination ?: -1))
+                )
+            }
         }
     }
 

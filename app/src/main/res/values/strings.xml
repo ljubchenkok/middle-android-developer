@@ -21,4 +21,5 @@ Nullam sem sem, rhoncus vitae porttitor et, pretium eu ipsum. Sed semper semper 
     <string name="title_authorization">Authorization</string>
     <string name="title_privacy_policy">Privacy policy</string>
     <string name="duration">%1$d min read</string>
+    <string name="title_registration">Registration</string>
 </resources>

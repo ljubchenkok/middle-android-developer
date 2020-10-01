@@ -240,6 +240,7 @@ sealed class NavigationCommand() {
 
     data class StartLogin(val privateDestination: Int? = null) : NavigationCommand()
     data class FinishLogin(val privateDestination: Int? = null) : NavigationCommand()
+    data class StartRegistration(val privateDestination: Int? = null) : NavigationCommand()
 }
 
 enum class Loading {

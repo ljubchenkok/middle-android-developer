@@ -106,11 +106,29 @@
             tools:layout="@layout/fragment_privacy_policy" />
 
     </navigation>
+    <navigation
+        android:id="@+id/reg"
+        android:label="@string/title_registration"
+        app:startDestination="@id/nav_reg">
+        <fragment
+            android:id="@+id/nav_reg"
+            android:name="ru.skillbranch.skillarticles.ui.auth.RegistrationFragment"
+            android:label="@string/title_registration"
+            tools:layout="@layout/fragment_registration">
 
+            <argument
+                android:name="private_destination"
+                android:defaultValue="-1"
+                app:argType="integer" />
+        </fragment>
+    </navigation>
     <!--global actions -->
     <action
         android:id="@+id/start_login"
         app:destination="@id/auth" />
+    <action
+        android:id="@+id/start_registration"
+        app:destination="@id/reg" />
     <action
         android:id="@+id/finish_login"
         app:popUpTo="@id/auth"

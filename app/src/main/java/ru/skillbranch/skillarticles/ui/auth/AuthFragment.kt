@@ -3,7 +3,6 @@ package ru.skillbranch.skillarticles.ui.auth
 import android.text.Spannable
 import androidx.core.text.set
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.fragment_auth.*
 import ru.skillbranch.skillarticles.R
@@ -29,6 +28,9 @@ class AuthFragment : BaseFragment<AuthViewModel>() {
     override fun setupViews() {
         tv_privacy.setOnClickListener {
            viewModel.navigate(NavigationCommand.To(R.id.page_privacy_policy))
+        }
+        tv_register.setOnClickListener{
+            viewModel.navigate(NavigationCommand.StartRegistration(R.id.nav_profile))
         }
         btn_login.setOnClickListener{
             viewModel.handleLogin(

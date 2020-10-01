@@ -47,7 +47,7 @@ class RegistrationFragment() : BaseFragment<AuthViewModel>() {
         et_password_confirm.addTextChangedListener(registrationMatcher)
         btn_reg.setOnClickListener {
             if (validateAll()) {
-                viewModel.handleRegistration(
+                viewModel.handleRegister(
                     et_name.text.toString(),
                     et_login.text.toString(),
                     et_password.text.toString(),

@@ -25,6 +25,10 @@ class AuthViewModel(handle: SavedStateHandle) : BaseViewModel<AuthState>(handle,
 
     }
     override fun handleRegister(name: String, login: String, password: String, dest: Int?) {
+        if(name.isEmpty() || login.isEmpty() || password.isEmpty()){
+            notify(Notify.ErrorMessage("Name, login, password it is required fields and not must be empty"))
+            return
+        }
         if(!name.contains(ValidationType.NAME.value.first!!)){
             notify(Notify.ErrorMessage(ValidationType.NAME.value.second, "OK", null))
             return

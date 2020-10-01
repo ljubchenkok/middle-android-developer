@@ -29,7 +29,7 @@ class AuthViewModel(handle: SavedStateHandle) : BaseViewModel<AuthState>(handle,
             notify(Notify.ErrorMessage("Name, login, password it is required fields and not must be empty","OK", null))
             return
         }
-        if(!name.contains(ValidationType.NAME.value.first!!)){
+        if(!name.contains(ValidationType.NAME.value.first!!) || name.length < 3){
             notify(Notify.ErrorMessage(ValidationType.NAME.value.second, "OK", null))
             return
         }

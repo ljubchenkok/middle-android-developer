@@ -16,16 +16,16 @@ import ru.skillbranch.skillarticles.ui.base.BaseFragment
 import ru.skillbranch.skillarticles.viewmodels.auth.AuthViewModel
 
 class RegistrationFragment() : BaseFragment<AuthViewModel>() {
-    var _mockFactory:((SavedStateRegistryOwner)-> ViewModelProvider.Factory)? = null
+    var _mockFactory: ((SavedStateRegistryOwner) -> ViewModelProvider.Factory)? = null
     override val viewModel: AuthViewModel by viewModels {
-        _mockFactory?.invoke(this)?: defaultViewModelProviderFactory
+        _mockFactory?.invoke(this) ?: defaultViewModelProviderFactory
     }
 
     //testing constructor
     @VisibleForTesting(otherwise = VisibleForTesting.NONE)
     constructor(
         mockRoot: RootActivity,
-        mockFactory: ((SavedStateRegistryOwner)-> ViewModelProvider.Factory)? = null
+        mockFactory: ((SavedStateRegistryOwner) -> ViewModelProvider.Factory)? = null
     ) : this() {
         _mockRoot = mockRoot
         _mockFactory = mockFactory
@@ -46,14 +46,14 @@ class RegistrationFragment() : BaseFragment<AuthViewModel>() {
         et_password.addTextChangedListener(registrationMatcher)
         et_password_confirm.addTextChangedListener(registrationMatcher)
         btn_reg.setOnClickListener {
-            if (validateAll()) {
-                viewModel.handleRegister(
-                    et_name.text.toString(),
-                    et_login.text.toString(),
-                    et_password.text.toString(),
-                    if (args.privateDestination == -1) null else args.privateDestination
-                )
-            }
+//            if (validateAll()) {
+            viewModel.handleRegister(
+                et_name.text.toString(),
+                et_login.text.toString(),
+                et_password.text.toString(),
+                if (args.privateDestination == -1) null else args.privateDestination
+            )
+//            }
         }
     }
 

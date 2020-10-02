@@ -29,15 +29,15 @@ class AuthViewModel(handle: SavedStateHandle) : BaseViewModel<AuthState>(handle,
             notify(Notify.ErrorMessage("Name, login, password it is required fields and not must be empty"))
             return
         }
-        if(!name.contains(ValidationType.NAME.value.first!!) || name.length < 3){
+        if(!name.contains(ValidationType.NAME.value.first) || name.length < 3){
             notify(Notify.ErrorMessage(ValidationType.NAME.value.second))
             return
         }
-        if(!android.util.Patterns.EMAIL_ADDRESS.matcher(login).matches()){
+        if(!login.contains(ValidationType.LOGIN.value.first)){
             notify(Notify.ErrorMessage(ValidationType.LOGIN.value.second))
             return
         }
-        if(!password.contains(ValidationType.PASSWORD.value.first!!) || password.length < 8 ){
+        if(!password.contains(ValidationType.PASSWORD.value.first) || password.length < 8 ){
             notify(Notify.ErrorMessage(ValidationType.PASSWORD.value.second))
             return
         }
@@ -48,12 +48,14 @@ class AuthViewModel(handle: SavedStateHandle) : BaseViewModel<AuthState>(handle,
 
     }
 
-    internal enum class ValidationType(val value: Pair<Regex?, String>) {
-        NAME("^[\\w+-]+$".toRegex() to "The name must be at least 3 characters long and contain only letters and numbers and can also contain the characters \"-\" and \"_\""),
-        LOGIN(null to "Incorrect Email entered"),
-        PASSWORD("^[A-z0-9]+$".toRegex() to "Password must be at least 8 characters long and contain only letters and numbers"),
-    }
+
 
 }
 
 data class AuthState( val isAuth: Boolean = false) : IViewModelState
+
+internal enum class ValidationType(val value: Pair<Regex, String>) {
+    NAME("^[A-zА-я0-9Ёё_-]{3,}$".toRegex() to "The name must be at least 3 characters long and contain only letters and numbers and can also contain the characters \"-\" and \"_\""),
+    LOGIN(android.util.Patterns.EMAIL_ADDRESS.pattern().toRegex() to "Incorrect Email entered"),
+    PASSWORD("^[A-z0-9]{8,}$".toRegex() to "Password must be at least 8 characters long and contain only letters and numbers"),
+}

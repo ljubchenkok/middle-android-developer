@@ -2,18 +2,19 @@ package ru.skillbranch.skillarticles.ui.auth
 
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Patterns
 import androidx.annotation.VisibleForTesting
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import androidx.savedstate.SavedStateRegistryOwner
+import com.google.android.material.textfield.TextInputLayout
 import kotlinx.android.synthetic.main.fragment_registration.*
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.extensions.hideKeyBoard
 import ru.skillbranch.skillarticles.ui.RootActivity
 import ru.skillbranch.skillarticles.ui.base.BaseFragment
 import ru.skillbranch.skillarticles.viewmodels.auth.AuthViewModel
+import ru.skillbranch.skillarticles.viewmodels.auth.ValidationType
 
 class RegistrationFragment() : BaseFragment<AuthViewModel>() {
     var _mockFactory: ((SavedStateRegistryOwner) -> ViewModelProvider.Factory)? = null
@@ -41,21 +42,32 @@ class RegistrationFragment() : BaseFragment<AuthViewModel>() {
 
 
     override fun setupViews() {
+        btn_reg.isEnabled = true
         et_login.addTextChangedListener(registrationMatcher)
         et_name.addTextChangedListener(registrationMatcher)
         et_password.addTextChangedListener(registrationMatcher)
         et_password_confirm.addTextChangedListener(registrationMatcher)
         btn_reg.setOnClickListener {
 //            if (validateAll()) {
-            viewModel.handleRegister(
-                et_name.text.toString(),
-                et_login.text.toString(),
-                et_password.text.toString(),
-                if (args.privateDestination == -1) null else args.privateDestination
-            )
+                viewModel.handleRegister(
+                    et_name.text.toString(),
+                    et_login.text.toString(),
+                    et_password.text.toString(),
+                    if (args.privateDestination == -1) null else args.privateDestination
+                )
 //            }
         }
     }
+
+    private fun validateAll(): Boolean {
+        var result = validate(wrap_name, et_name.text.toString(), ValidationType.NAME)
+        result = validate(wrap_login, et_login.text.toString(), ValidationType.LOGIN) && result
+        result =
+            validate(wrap_password, et_password.text.toString(), ValidationType.PASSWORD) && result
+        result = et_password.text.toString() == et_password_confirm.text.toString() && result
+        return result
+    }
+
 
     private val registrationMatcher = object : TextWatcher {
         override fun afterTextChanged(editable: Editable?) {
@@ -67,86 +79,44 @@ class RegistrationFragment() : BaseFragment<AuthViewModel>() {
 
         override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
             when (s.hashCode()) {
-                et_name.text.hashCode() -> validate(s.toString(), ValidationType.NAME)
-                et_login.text.hashCode() -> validate(s.toString(), ValidationType.LOGIN)
-                et_password.text.hashCode() -> validate(s.toString(), ValidationType.PASSWORD)
-                et_password_confirm.text.hashCode() -> validate(
+                et_name.text.hashCode() -> validate(wrap_name, s.toString(), ValidationType.NAME)
+                et_login.text.hashCode() -> validate(wrap_login, s.toString(), ValidationType.LOGIN)
+                et_password.text.hashCode() -> validate(
+                    wrap_password,
                     s.toString(),
-                    ValidationType.CONFIRM
+                    ValidationType.PASSWORD
                 )
-            }
-        }
-    }
+                et_password_confirm.text.hashCode() -> {
+                    with(wrap_password_confirm) {
+                        if (s.toString() != et_password.text.toString()) {
+//                            btn_reg.isEnabled = false
+                            isErrorEnabled = true
+                            error = "Passwords do not match"
+                            false
+                        } else {
+//                            btn_reg.isEnabled = true
+                            isErrorEnabled = false
+                            error = null
+                            true
+                        }
+                    }
 
-    private fun validateAll(): Boolean {
-        var result = validate(et_name.text.toString(), ValidationType.NAME)
-        result = validate(et_login.text.toString(), ValidationType.LOGIN) && result
-        result = validate(et_password.text.toString(), ValidationType.PASSWORD) && result
-        result = validate(et_password_confirm.text.toString(), ValidationType.CONFIRM) && result
-        return result
-    }
-
-    private fun validate(s: String, type: ValidationType): Boolean {
-        return when (type) {
-            ValidationType.NAME -> {
-                with(wrap_name) {
-                    if (!s.contains(type.value.first!!) || s.length < 3) {
-                        isErrorEnabled = true
-                        error = type.value.second
-                        false
-                    } else {
-                        isErrorEnabled = false
-                        error = null
-                        true
-                    }
-                }
-            }
-            ValidationType.LOGIN -> {
-                with(wrap_login) {
-                    if (!Patterns.EMAIL_ADDRESS.matcher(s).matches()) {
-                        isErrorEnabled = true
-                        error = type.value.second
-                        false
-                    } else {
-                        isErrorEnabled = false
-                        error = null
-                        true
-                    }
-                }
-            }
-            ValidationType.PASSWORD -> {
-                with(wrap_password) {
-                    if (!s.contains(type.value.first!!) || s.length < 8) {
-                        isErrorEnabled = true
-                        error = type.value.second
-                        false
-                    } else {
-                        isErrorEnabled = false
-                        error = null
-                        true
-                    }
-                }
-            }
-            ValidationType.CONFIRM -> {
-                with(wrap_password_confirm) {
-                    if (s != et_password.text.toString()) {
-                        isErrorEnabled = true
-                        error = type.value.second
-                        false
-                    } else {
-                        isErrorEnabled = false
-                        error = null
-                        true
-                    }
                 }
             }
         }
     }
 
-    internal enum class ValidationType(val value: Pair<Regex?, String>) {
-        NAME("^[\\w+-]+$".toRegex() to "The name must be at least 3 characters long and contain only letters and numbers and can also contain the characters \"-\" and \"_\""),
-        LOGIN(null to "Incorrect Email entered"),
-        PASSWORD("^[A-z0-9]+$".toRegex() to "Password must be at least 8 characters long and contain only letters and numbers"),
-        CONFIRM(null to "Passwords do not match")
+    private fun validate(view: TextInputLayout, s: String, type: ValidationType): Boolean {
+        with(view) {
+            return if (!s.contains(type.value.first)) {
+                isErrorEnabled = true
+                error = type.value.second
+                false
+            } else {
+                isErrorEnabled = false
+                error = null
+                true
+            }
+        }
     }
 }

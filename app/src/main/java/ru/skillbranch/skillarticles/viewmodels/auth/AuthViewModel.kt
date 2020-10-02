@@ -37,7 +37,7 @@ class AuthViewModel(handle: SavedStateHandle) : BaseViewModel<AuthState>(handle,
             notify(Notify.ErrorMessage(ValidationType.LOGIN.value.second))
             return
         }
-        if(!name.contains(ValidationType.PASSWORD.value.first!!) || password.isEmpty()){
+        if(password.isEmpty() || !password.contains(ValidationType.PASSWORD.value.first!!) || password.length < 8 ){
             notify(Notify.ErrorMessage(ValidationType.PASSWORD.value.second))
             return
         }

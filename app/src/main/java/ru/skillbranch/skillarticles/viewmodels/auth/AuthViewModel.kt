@@ -26,19 +26,19 @@ class AuthViewModel(handle: SavedStateHandle) : BaseViewModel<AuthState>(handle,
     }
     override fun handleRegister(name: String, login: String, password: String, dest: Int?) {
         if(name.isEmpty() || login.isEmpty() || password.isEmpty()){
-            notify(Notify.ErrorMessage("Name, login, password it is required fields and not must be empty","OK", null))
+            notify(Notify.ErrorMessage("Name, login, password it is required fields and not must be empty"))
             return
         }
         if(!name.contains(ValidationType.NAME.value.first!!) || name.length < 3){
-            notify(Notify.ErrorMessage(ValidationType.NAME.value.second, "OK", null))
+            notify(Notify.ErrorMessage(ValidationType.NAME.value.second))
             return
         }
         if(!android.util.Patterns.EMAIL_ADDRESS.matcher(login).matches()){
-            notify(Notify.ErrorMessage(ValidationType.LOGIN.value.second, "OK", null))
+            notify(Notify.ErrorMessage(ValidationType.LOGIN.value.second))
             return
         }
         if(!name.contains(ValidationType.PASSWORD.value.first!!) || password.isEmpty()){
-            notify(Notify.ErrorMessage(ValidationType.PASSWORD.value.second, "OK", null))
+            notify(Notify.ErrorMessage(ValidationType.PASSWORD.value.second))
             return
         }
         launchSafety {
